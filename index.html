@@ -226,6 +226,61 @@ dialog::backdrop{background:rgba(14,32,22,.5)}
 .saisie{margin:22px 0 10px;padding-top:16px;border-top:1px dashed var(--line);font:600 16px var(--cond);color:var(--ink-2)}
 .saisie:first-child{margin-top:0;padding-top:0;border-top:0}
 
+/* ---------- Tableau de bord ---------- */
+.st-wrap{transition:opacity .2s}
+#view.is-stale .st-wrap{opacity:.45}
+.st-scope{margin:2px 0 14px;font-size:14px;color:var(--ink-2)}
+.st-scope b{color:var(--ink);font-weight:600}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px 13px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.kpi-l{font-size:13.5px;color:var(--ink-2)}
+.kpi-v{font:600 36px/1.05 var(--cond);margin-top:2px}
+.kpi-s{font-size:13px;color:var(--ink-3)}
+.kpi-st{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;margin-top:7px;align-self:flex-start;padding:3px 9px 3px 7px;border-radius:999px}
+.kpi-st.ok{background:var(--ok-bg);color:var(--ok)} .kpi-st.warn{background:var(--m-bg);color:var(--m)} .kpi-st.bad{background:var(--hs-bg);color:var(--hs)}
+.st-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.st-card{padding:14px 16px 14px;min-width:0}
+.st-card.full{grid-column:1/-1}
+.st-card-h{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}
+.st-card-h h3{margin:0;font:600 19px/1.2 var(--cond)}
+.st-card-h p{margin:2px 0 0;font-size:13px;color:var(--ink-3)}
+.st-card-h .btn-link{margin-left:auto;flex:none}
+.st-legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:12.5px;color:var(--ink-2);margin:0 0 8px}
+.st-legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+.sw-line{width:18px;height:0;border-top:2px solid var(--ink-2);display:inline-block}
+.st-plot svg{display:block;overflow:visible}
+.st-plot text{font-size:12px;fill:var(--ink-3);font-variant-numeric:tabular-nums}
+.st-plot text.v{fill:var(--ink);font-weight:600;font-size:12.5px}
+.st-plot text.n{fill:var(--ink-2);font-size:13px}
+.st-plot text.w{fill:#fff;font-weight:600}
+.st-plot text.k{fill:var(--ink);font-weight:600}
+.st-plot .grid{stroke:#E4E8E5;stroke-width:1}
+.st-plot .base{stroke:#C9D0CB;stroke-width:1}
+.st-plot .obj{stroke:var(--ink-2);stroke-width:1.5}
+.st-plot g[data-tip]{cursor:pointer;outline:none}
+.st-plot .xh{stroke:var(--ink-3);stroke-width:1;opacity:0}
+.st-plot g[data-tip]:hover .xh,.st-plot g[data-tip]:focus-visible .xh{opacity:.6}
+.st-plot .dot-ok{opacity:0}
+.st-plot g[data-tip]:hover .dot-ok,.st-plot g[data-tip]:focus-visible .dot-ok{opacity:1}
+.st-plot g[data-tip]:hover .mk{opacity:.72}
+.st-plot g[data-tip]:focus-visible .mk{stroke:var(--ink);stroke-width:2}
+.f-ok{fill:var(--brand)} .f-warn{fill:var(--m-solid)} .f-hs{fill:var(--hs-solid)} .f-m{fill:var(--m-solid)}
+.h0{fill:#EEF5F0} .h1{fill:#C7E3D1} .h2{fill:#8CC6A3} .h3{fill:#3E9A68} .h4{fill:#0E6B43} .hx{fill:#F1F3F2}
+.st-tbl{max-height:360px;overflow:auto;border:1px solid var(--line-2);border-radius:var(--r)}
+.st-tbl th,.st-tbl td{padding:6px 10px;font-size:13.5px}
+.st-tbl thead th{font-size:14px}
+.meter{display:flex;align-items:center;gap:10px;min-width:190px}
+.meter-t{flex:1;height:8px;border-radius:4px;background:#E3E8E5;overflow:hidden;max-width:200px}
+.meter-f{display:block;height:100%;border-radius:4px}
+.meter-f.good{background:var(--ok)} .meter-f.mid{background:var(--m-solid)} .meter-f.bad{background:var(--hs-solid)}
+.meter b{font-weight:600;font-variant-numeric:tabular-nums;min-width:44px;text-align:right}
+.seg.inline{margin:0}
+#tip{position:fixed;z-index:60;pointer-events:none;background:var(--ink);color:#fff;border-radius:6px;padding:7px 11px 8px;font-size:13px;line-height:1.35;max-width:280px;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+#tip b{display:block;font:600 18px/1.2 var(--cond)}
+#tip span{display:block;color:#C9D3CD}
+@media (max-width:900px){.st-grid{grid-template-columns:1fr}}
+
 /* ---------- Responsive ---------- */
 @media (max-width:1180px){
   .shifts{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -271,11 +326,13 @@ dialog::backdrop{background:rgba(14,32,22,.5)}
     <button class="tab" role="tab" data-tab="jour">Suivi du jour</button>
     <button class="tab" role="tab" data-tab="semaine">Semaine</button>
     <button class="tab" role="tab" data-tab="points">Points à traiter <span class="count" id="pts-count" hidden></span></button>
+    <button class="tab" role="tab" data-tab="stats">Tableau de bord</button>
   </nav>
 
   <div class="toolbar">
     <div class="chips" id="chips" role="group" aria-label="Filtrer par secteur"></div>
     <div class="tools">
+      <div class="seg inline" id="periode" role="group" aria-label="Période du tableau de bord" hidden></div>
       <select class="field" id="filtre" aria-label="Filtrer les engins">
         <option value="tous">Tous les engins</option>
         <option value="manquante">Check-list manquante</option>
@@ -296,6 +353,7 @@ dialog::backdrop{background:rgba(14,32,22,.5)}
 </div>
 
 <dialog id="detail" aria-labelledby="d-title"></dialog>
+<div id="tip" role="tooltip" hidden></div>
 
 <script>
 /* =====================================================================
@@ -341,6 +399,8 @@ const CONFIG = {
   NON_EST_ANOMALIE: false,   // true = une réponse "Non" compte comme une maintenance à prévoir
   ACTUALISATION_MIN: 3,      // rafraîchissement automatique (minutes) quand on regarde le jour en cours
   JOURS_HISTORIQUE: 7,       // profondeur de la vue Semaine et de l'historique engin
+  OBJECTIF_REALISATION: 95,  // objectif de taux de réalisation (%) affiché sur le tableau de bord
+  PERIODES: [7, 30, 90],     // choix de période (jours) du tableau de bord
 
   FORMULAIRE_URL: "",        // lien public du formulaire Baserow (optionnel)
   LIGNE_BASEROW_URL: "",     // ex. "https://table.pingflow.io/database/123/table/456/789/row/{id}" (optionnel)
@@ -602,14 +662,16 @@ async function api(alias, params = {}) {
   return r.json();
 }
 async function fetchAll(alias, params = {}, first = null) {
-  const out = []; let page = 1, d = first;
-  while (true) {
-    if (!d) d = await api(alias, { ...params, size: 200, page });
-    out.push(...d.results);
-    if (!d.next || page >= 500) break;
-    page++; d = null;
-  }
-  return out;
+  const size = 200;
+  const d1 = first || await api(alias, { ...params, size, page: 1 });
+  const pages = Math.min(500, Math.max(1, Math.ceil((d1.count ?? d1.results.length) / size)));
+  const res = [d1.results];
+  let next = 2;
+  const worker = async () => {                      // 4 pages en parallèle
+    while (next <= pages) { const p = next++; res[p - 1] = (await api(alias, { ...params, size, page: p })).results; }
+  };
+  await Promise.all([worker(), worker(), worker(), worker()]);
+  return res.flat();
 }
 /** Check-lists entre deux dates. Essaie le filtre Baserow, sinon parcourt la table depuis la fin. */
 async function fetchChecks(from, to) {
@@ -646,6 +708,7 @@ async function scanFromEnd(from, head = null) {
   return out;
 }
 function describeError(e) {
+  if (e.network && window.origin === "null") return `La page est isolée par l'iframe Baserow et ne peut pas lire les données. Dans l'élément IFrame, coche « Autoriser l'iframe à accéder aux données de même origine », puis recharge.`;
   if (e.network) return `Impossible de joindre le Worker (${CONFIG.API_BASE}). Vérifie l'URL dans CONFIG.API_BASE et que cette page est bien dans ALLOWED_ORIGINS.`;
   if (e.status === 401 || (e.status === 403 && !/origine/i.test(e.detail || ""))) return `Baserow refuse l'accès (${e.status}). Vérifie le token BASEROW_TOKEN du Worker et ses droits de lecture sur les deux tables.`;
   if (e.status === 403) return e.detail;
@@ -663,7 +726,8 @@ const state = {
   now: now0,
   date: parseDate(qs.get("date")) || now0.date,
   poste: now0.i,
-  tab: ["jour", "semaine", "points"].includes(qs.get("onglet")) ? qs.get("onglet") : "jour",
+  tab: ["jour", "semaine", "points", "stats"].includes(qs.get("onglet")) ? qs.get("onglet") : "jour",
+  periode: CONFIG.PERIODES.includes(Number(qs.get("periode"))) ? Number(qs.get("periode")) : (CONFIG.PERIODES[1] || CONFIG.PERIODES[0]), tbl: {},
   secteur: qs.get("secteur") || "Tous",
   filtre: "tous", tri: "secteur", q: "", scope: "actuel",
   model: null, range: null, loading: false, error: null, updatedAt: null, detail: null
@@ -703,7 +767,7 @@ async function loadData({ silent = false } = {}) {
     console.error(e);
     state.error = describeError(e);
   } finally {
-    if (tok === loadSeq) { state.loading = false; render(); }
+    if (tok === loadSeq) { state.loading = false; render(); if (silent && state.tab === "stats") loadStats({ force: true }); }
   }
 }
 
@@ -762,7 +826,7 @@ function anomalyItems(list) {
   else for (const e of list) for (const c of state.model.byEngin.get(e.key) || []) if (c.date <= state.date) push(e, c);
   return items;
 }
-const rateClass = r => r >= 0.95 ? "good" : r >= 0.8 ? "mid" : "bad";
+const rateClass = r => r >= CONFIG.OBJECTIF_REALISATION / 100 ? "good" : r >= 0.8 ? "mid" : "bad";
 
 /* =====================================================================
    RENDU
@@ -777,6 +841,17 @@ function render() {
   document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.tab === state.tab)));
   if (CONFIG.FORMULAIRE_URL) { const a = $("#btn-form"); a.hidden = false; a.href = CONFIG.FORMULAIRE_URL; }
   renderSync(); renderBanners();
+  const isStats = state.tab === "stats";
+  $("#shifts").hidden = $("#daysum").hidden = isStats;
+  $("#periode").hidden = !isStats;
+  for (const id of ["#filtre", "#tri", "#q"]) $(id).hidden = isStats;
+  if (isStats) {
+    $("#periode").innerHTML = CONFIG.PERIODES.map(n => `<button data-act="periode" data-n="${n}" aria-pressed="${n === state.periode}">${n} jours</button>`).join("");
+    if (state.model) renderChips();
+    renderStatsView();
+    if (statsKey() !== stats.wanted) loadStats();
+    return;
+  }
   if (!ready()) {
     $("#shifts").innerHTML = ""; $("#daysum").textContent = ""; $("#chips").innerHTML = "";
     $("#view").innerHTML = state.error ? "" : `<div class="loading">Chargement des check-lists…</div>`;
@@ -1072,6 +1147,314 @@ function checkHtml(c, k, n) {
 }
 
 /* =====================================================================
+   TABLEAU DE BORD
+   ===================================================================== */
+const stats = { key: null, wanted: null, model: null, range: null, loading: false, error: null, seq: 0 };
+const statsKey = () => `${addDays(state.date, -(state.periode - 1))}|${state.date}`;
+const OBJ = CONFIG.OBJECTIF_REALISATION / 100;
+const pct = r => r == null || !isFinite(r) ? "—" : `${Math.round(r * 100)} %`;
+const int = n => Number(n).toLocaleString("fr-FR").replace(/\u202f/g, "\u00a0");
+const rate = o => o.exp ? o.done / o.exp : null;
+const JOURS = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"];
+
+async function loadStats({ force = false } = {}) {
+  const key = statsKey(), [from, to] = key.split("|");
+  if (!force && stats.key === key && stats.model) { stats.wanted = key; return; }
+  const tok = ++stats.seq;
+  stats.wanted = key; stats.loading = true;
+  if (state.tab === "stats") renderStatsView();
+  try {
+    const inRange = r => { const d = parseDate(r[CF.date]); return d && d >= from && d <= to; };
+    let enginRows, rows;
+    if (DEMO) { const d = demoStore(); await sleep(250); enginRows = d.engins; rows = d.rows.filter(inRange); }
+    else {
+      if (CONFIG.TABLE_ENGINS && !cache.engins) { cache.engins = await fetchAll(CONFIG.TABLE_ENGINS); cache.enginsAt = Date.now(); }
+      enginRows = cache.engins || [];
+      rows = (await fetchChecks(from, to)).filter(inRange);
+    }
+    if (tok !== stats.seq) return;
+    stats.model = buildModel(enginRows, rows);
+    stats.key = key; stats.range = { from, to }; stats.error = null;
+  } catch (e) {
+    if (tok !== stats.seq) return;
+    console.error(e); stats.error = describeError(e);
+  } finally {
+    if (tok === stats.seq) { stats.loading = false; if (state.tab === "stats") renderStatsView(); }
+  }
+}
+
+function computeStats(sm) {
+  const { from, to } = stats.range;
+  const engins = sm.engins.filter(e => state.secteur === "Tous" || norm(e.secteur) === norm(state.secteur));
+  const days = []; for (let d = from; d <= to; d = addDays(d, 1)) days.push(d);
+  const perDay = days.map(d => ({ d, exp: 0, done: 0 }));
+  const perSect = new Map();
+  const grid = POSTES.map(() => Array.from({ length: 7 }, () => ({ exp: 0, done: 0 })));
+  const perPoste = POSTES.map(p => ({ p, exp: 0, done: 0 }));
+  const perEngin = new Map(engins.map(e => [e.key, { e, exp: 0, done: 0, nbM: 0, nbHS: 0, checks: 0, last: null }]));
+  const tot = { exp: 0, done: 0 };
+  days.forEach((d, k) => {
+    const wd = (isoDate(d).getDay() + 6) % 7;
+    for (const p of POSTES) {
+      if (timeState(d, p.i) !== "past") continue;           // postes terminés uniquement
+      for (const e of engins) {
+        const ok = sm.byCell.has(`${e.key}|${d}|${p.i}`) ? 1 : 0;
+        const sk = e.secteur || "";
+        if (!perSect.has(sk)) perSect.set(sk, { name: e.secteur || "Sans secteur", exp: 0, done: 0 });
+        for (const o of [tot, perDay[k], perSect.get(sk), grid[p.i][wd], perPoste[p.i], perEngin.get(e.key)]) { o.exp++; o.done += ok; }
+      }
+    }
+  });
+  const pts = new Map(); let nChecks = 0, nAnom = 0, nHS = 0; const hsEngins = new Set();
+  for (const e of engins) {
+    const pe = perEngin.get(e.key);
+    for (const c of sm.byEngin.get(e.key) || []) {
+      nChecks++; pe.checks++; pe.last = c;
+      if (c.level !== "OK") nAnom++;
+      if (c.level === "HS") { nHS++; pe.nbHS++; hsEngins.add(e.key); } else if (c.level === "M") pe.nbM++;
+      for (const p of c.pts) if (p.sev >= 2) {
+        if (!pts.has(p.label)) pts.set(p.label, { name: p.label, q: p.question, HS: 0, M: 0 });
+        pts.get(p.label)[p.status === "HS" ? "HS" : "M"]++;
+      }
+    }
+  }
+  const postesFaits = perPoste.filter(x => x.exp);
+  const worstPoste = postesFaits.length ? postesFaits.reduce((a, b) => rate(b) < rate(a) ? b : a) : null;
+  return {
+    from, to, days, engins, tot, perDay, grid, perPoste, worstPoste, nChecks, nAnom, nHS, hsEngins: hsEngins.size,
+    perSect: [...perSect.values()].filter(s => s.exp).sort((a, b) => rate(b) - rate(a) || cmpNat(a.name, b.name)),
+    pts: [...pts.values()].sort((a, b) => (b.HS + b.M) - (a.HS + a.M) || b.HS - a.HS),
+    perEngin: [...perEngin.values()]
+  };
+}
+
+/* ----- rendu ----- */
+function renderStatsView() {
+  const view = $("#view");
+  view.classList.toggle("is-stale", stats.loading && !!stats.model);
+  if (!stats.model) {
+    view.innerHTML = stats.error ? emptyBox("Chargement impossible", stats.error) : `<div class="loading">Chargement de ${state.periode} jours de check-lists…</div>`;
+    return;
+  }
+  const S = computeStats(stats.model);
+  const scroll = view.scrollTop;
+  view.innerHTML = statsHtml(S);
+  view.scrollTop = scroll;
+  for (const el of view.querySelectorAll("[data-plot]")) {
+    const W = Math.max(280, el.clientWidth);
+    el.innerHTML = PLOTS[el.dataset.plot](S, W);
+  }
+}
+let _rsz;
+window.addEventListener("resize", () => { clearTimeout(_rsz); _rsz = setTimeout(() => { if (state.tab === "stats" && stats.model) renderStatsView(); }, 150); });
+
+function kpi(label, value, sub, status) {
+  const st = status ? `<span class="kpi-st ${status[0]}">${status[0] === "ok" ? ICON.check : ICON.warn.replace(/18/g, "14")}${esc(status[1])}</span>` : "";
+  return `<div class="kpi"><span class="kpi-l">${esc(label)}</span><b class="kpi-v">${esc(value)}</b><span class="kpi-s">${esc(sub)}</span>${st}</div>`;
+}
+function card(id, title, sub, { full = false, legend = "", table, body } = {}) {
+  const open = !!state.tbl[id];
+  const content = body ?? (open ? `<div class="st-tbl">${table}</div>` : `${legend ? `<div class="st-legend">${legend}</div>` : ""}<div class="st-plot" data-plot="${id}"></div>`);
+  const btn = table ? `<button class="btn-link" data-act="tbl" data-c="${id}" aria-pressed="${open}">${open ? "Voir le graphique" : "Voir le tableau"}</button>` : "";
+  return `<section class="card st-card${full ? " full" : ""}"><header class="st-card-h"><div><h3>${esc(title)}</h3><p>${esc(sub)}</p></div>${btn}</header>${content}</section>`;
+}
+const tbl = (head, rows) => `<table><thead><tr>${head.map((h, i) => `<th${i ? ' class="r"' : ""}>${esc(h)}</th>`).join("")}</tr></thead><tbody>${
+  rows.map(r => `<tr>${r.map((c, i) => `<td${i ? ' class="r num"' : ""}>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+const sw = (cls, label) => `<span><i class="sw ${cls}"></i>${esc(label)}</span>`;
+const swFill = { ok: "background:var(--brand)", warn: "background:var(--m-solid)", hs: "background:var(--hs-solid)", m: "background:var(--m-solid)" };
+const swatch = (k, label) => `<span><i class="sw" style="${swFill[k]}"></i>${esc(label)}</span>`;
+
+function statsHtml(S) {
+  const nE = S.engins.length, r = rate(S.tot);
+  const scope = `Du ${esc(fmtLong(S.from))} au ${esc(fmtLong(S.to))} ${S.to.slice(0, 4)}`
+    + ` : <b>${plural(nE, "engin suivi", "engins suivis")}</b>${state.secteur !== "Tous" ? ` (secteur ${esc(state.secteur)})` : ""}, postes terminés uniquement.`;
+  if (!nE || !S.tot.exp) return `<div class="st-wrap"><p class="st-scope">${scope}</p>${emptyBox("Aucune donnée sur cette période", "Aucun poste terminé ou aucun engin suivi pour ce filtre.")}</div>`;
+  const kpis = [
+    kpi("Taux de réalisation", pct(r), `${int(S.tot.done)} check-lists faites sur ${int(S.tot.exp)} attendues`,
+      r >= OBJ ? ["ok", `Objectif de ${CONFIG.OBJECTIF_REALISATION}\u00a0% atteint`] : ["warn", `Sous l'objectif de ${CONFIG.OBJECTIF_REALISATION}\u00a0%`]),
+    kpi("Check-lists non faites", int(S.tot.exp - S.tot.done), `sur ${plural(S.days.length, "jour", "jours")}, soit ${(((S.tot.exp - S.tot.done) / S.days.length) || 0).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} par jour`),
+    kpi("Check-lists avec défaut", pct(S.nChecks ? S.nAnom / S.nChecks : null), `${int(S.nAnom)} sur ${int(S.nChecks)} saisies ont au moins un point M ou HS`),
+    kpi("Relevés HS", int(S.nHS), S.nHS ? `sur ${plural(S.hsEngins, "engin", "engins")} différents` : "aucun arrêt signalé", S.nHS ? ["bad", "Arrêts immédiats signalés"] : null),
+    S.worstPoste ? kpi("Poste le moins suivi", S.worstPoste.p.nom, `${pct(rate(S.worstPoste))} de réalisation`) : ""
+  ].join("");
+
+  const objLeg = `<span><i class="sw-line"></i>Objectif ${CONFIG.OBJECTIF_REALISATION}\u00a0%</span>`;
+  const cDaily = card("daily", "Taux de réalisation par jour", `Part des check-lists faites sur les postes terminés. Axe resserré pour voir les écarts ; clique sur une journée pour l'ouvrir.`, {
+    full: true, legend: `<span><i class="sw-line" style="border-color:var(--brand)"></i>Taux du jour</span>` + `<span><i class="sw" style="background:var(--m-solid);border-radius:50%"></i>Jour sous l'objectif</span>` + objLeg,
+    table: tbl(["Date", "Faites", "Attendues", "Taux"], S.perDay.filter(x => x.exp).slice().reverse().map(x => [`${fmtWeekday(x.d)} ${fmtDate(x.d)}`, int(x.done), int(x.exp), pct(rate(x))]))
+  });
+  const cSect = card("sect", "Réalisation par secteur", "Classé du meilleur au moins bon.", {
+    legend: objLeg,
+    table: tbl(["Secteur", "Faites", "Attendues", "Taux"], S.perSect.map(x => [x.name, int(x.done), int(x.exp), pct(rate(x))]))
+  });
+  const cHeat = card("heat", "Réalisation par jour de la semaine et par poste", "Plus la case est foncée, mieux la check-list est faite.", {
+    legend: `<span>Taux :</span>` + ["h0", "h1", "h2", "h3", "h4"].map((h, i) => `<span><svg width="12" height="12" aria-hidden="true"><rect class="${h}" width="12" height="12" rx="3"/></svg>${["< 70 %", "70 à 80 %", "80 à 90 %", `90 à ${CONFIG.OBJECTIF_REALISATION}\u00a0%`, `≥ ${CONFIG.OBJECTIF_REALISATION}\u00a0%`][i]}</span>`).join(""),
+    table: tbl(["Poste", ...JOURS.map(j => j.slice(0, 3) + "."), "Total"], POSTES.map(p => [p.nom, ...S.grid[p.i].map(c => pct(rate(c))), pct(rate(S.perPoste[p.i]))]))
+  });
+  const defLeg = swatch("hs", "HS (réparation urgente)") + swatch("m", "M (maintenance à prévoir)");
+  const cPts = card("pts", "Points de contrôle en défaut", "Nombre de check-lists qui signalent le point en M ou en HS.", {
+    legend: defLeg,
+    table: tbl(["Point de contrôle", "HS", "M", "Total"], S.pts.map(x => [x.name, int(x.HS), int(x.M), int(x.HS + x.M)])),
+    ...(S.pts.length ? {} : { body: `<p class="kpi-s">Aucun point M ou HS signalé sur la période.</p>` })
+  });
+  const topE = S.perEngin.filter(x => x.nbHS + x.nbM).sort((a, b) => (b.nbHS + b.nbM) - (a.nbHS + a.nbM) || b.nbHS - a.nbHS || cmpNat(a.e.nom, b.e.nom)).slice(0, 8);
+  const cEng = card("eng", "Engins avec le plus de défauts", "Check-lists en M ou en HS par engin (8 premiers).", {
+    legend: defLeg,
+    table: tbl(["N° engin", "Secteur", "HS", "M"], topE.map(x => [x.e.nom, x.e.secteur || "—", int(x.nbHS), int(x.nbM)])),
+    ...(topE.length ? {} : { body: `<p class="kpi-s">Aucun engin en défaut sur la période.</p>` })
+  });
+  const rows = S.perEngin.slice().sort((a, b) => (rate(a) ?? 2) - (rate(b) ?? 2) || cmpNat(a.e.nom, b.e.nom)).map(x => {
+    const rr = rate(x), cls = rr == null ? "" : rateClass(rr);
+    const last = x.last ? `<span class="etat"><span class="code e-${x.last.level}">${x.last.level}</span><span class="etat-t">${LEVEL_TXT[x.last.level]}<span class="etat-s">${fmtShort(x.last.date)}, ${esc(posteNom(x.last.poste))}</span></span></span>` : `<span class="etat-s">Aucun relevé</span>`;
+    return `<tr class="click" data-act="detail" data-e="${esc(x.e.key)}">
+      <td><span class="engin num" style="font-size:17px">${esc(x.e.nom)}</span></td><td class="sect">${esc(x.e.secteur || "—")}</td>
+      <td><div class="meter"><span class="meter-t"><i class="meter-f ${cls}" style="width:${rr == null ? 0 : (rr * 100).toFixed(1)}%"></i></span><b>${pct(rr)}</b></div></td>
+      <td class="r num">${int(x.exp - x.done)}</td><td class="r num">${int(x.nbM)}</td><td class="r num">${int(x.nbHS)}</td><td>${last}</td></tr>`;
+  }).join("");
+  const cTable = card("table", "Détail par engin", "Classé du taux de réalisation le plus faible au plus élevé. Clique sur un engin pour ouvrir sa fiche.", {
+    full: true, body: `<div class="st-tbl" style="max-height:none;border:0"><table>
+      <thead><tr><th>N° engin</th><th>Secteur</th><th>Réalisation</th><th class="r">Non faites</th><th class="r">Check-lists M</th><th class="r">Check-lists HS</th><th>Dernier état</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>`
+  });
+  return `<div class="st-wrap"><p class="st-scope">${scope}</p><div class="kpis">${kpis}</div>
+    <div class="st-grid">${cDaily}${cSect}${cHeat}${cPts}${cEng}${cTable}</div></div>`;
+}
+
+/* ----- graphiques (SVG dessiné à la largeur réelle) ----- */
+const tipAttrs = (v, sub) => `tabindex="0" data-tip="${esc(v)}" data-tip-sub="${esc(sub)}"`;
+function colPath(x, yTop, w, yBase, r = 4) {           // colonne : coins arrondis en haut, base carrée
+  const h = yBase - yTop; if (h <= 0.5) return ""; r = Math.min(r, h, w / 2);
+  return `M${x},${yBase}V${yTop + r}Q${x},${yTop} ${x + r},${yTop}H${x + w - r}Q${x + w},${yTop} ${x + w},${yTop + r}V${yBase}Z`;
+}
+function barPath(x0, y, x1, h, r = 4) {                  // barre horizontale : bout arrondi à droite
+  const w = x1 - x0; if (w <= 0.5) return ""; r = Math.min(r, w, h / 2);
+  return `M${x0},${y}H${x1 - r}Q${x1},${y} ${x1},${y + r}V${y + h - r}Q${x1},${y + h} ${x1 - r},${y + h}H${x0}Z`;
+}
+const PLOTS = {
+  daily(S, W) {
+    const H = 250, L = 44, R = 96, T = 18, B = 30, n = S.perDay.length;
+    const pw = W - L - R, band = pw / n;
+    const valid = S.perDay.filter(x => x.exp);
+    const lowest = Math.min(OBJ, ...valid.map(rate));
+    const stepT = lowest >= 0.55 ? 0.1 : 0.25, lo = Math.max(0, Math.floor((lowest - 0.02) / stepT) * stepT);
+    const y = v => T + (1 - (v - lo) / (1 - lo)) * (H - T - B);
+    const cx = k => L + band * k + band / 2;
+    let g = "";
+    for (let v = 1; v >= lo - 1e-9; v = Math.round((v - stepT) * 100) / 100)
+      g += `<line class="${Math.abs(v - lo) < 1e-9 ? "base" : "grid"}" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end">${Math.round(v * 100)} %</text>`;
+    const step = n <= 7 ? 1 : n <= 31 ? Math.ceil(n / 10) : 7;
+    S.perDay.forEach((x, k) => {
+      if (n <= 31 ? k % step === (n - 1) % step : isoDate(x.d).getDay() === 1)
+        g += `<text x="${cx(k)}" y="${H - B + 18}" text-anchor="middle">${n <= 7 ? `${fmtWeekday(x.d)} ${x.d.slice(8)}` : fmtShort(x.d)}</text>`;
+    });
+    g += `<line class="obj" x1="${L}" x2="${W - R + 4}" y1="${y(OBJ)}" y2="${y(OBJ)}"/><text class="k" x="${W - R + 8}" y="${y(OBJ) + 4}">Objectif ${CONFIG.OBJECTIF_REALISATION}\u00a0%</text>`;
+    // courbe (interrompue les jours sans poste terminé)
+    let d = "", pen = false;
+    S.perDay.forEach((x, k) => { if (!x.exp) { pen = false; return; } d += `${pen ? "L" : "M"}${cx(k).toFixed(1)},${y(rate(x)).toFixed(1)}`; pen = true; });
+    g += `<path d="${d}" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+    const r0 = n > 45 ? 3.5 : 4.5;
+    S.perDay.forEach((x, k) => {
+      if (!x.exp) return;
+      const r = rate(x), below = r < OBJ, sub = `${fmtLong(x.d)}|${int(x.done)} faites sur ${int(x.exp)}|Cliquer pour ouvrir la journée`;
+      g += `<g ${tipAttrs(pct(r), sub)} data-act="day" data-d="${x.d}">
+        <rect x="${L + band * k}" y="${T}" width="${band}" height="${H - T - B}" fill="transparent"/>
+        <line class="xh" x1="${cx(k)}" x2="${cx(k)}" y1="${T}" y2="${H - B}"/>
+        <circle class="mk ${below ? "f-warn" : "f-ok"}${below ? "" : " dot-ok"}" cx="${cx(k)}" cy="${y(r)}" r="${r0}" stroke="#fff" stroke-width="2"/></g>`;
+    });
+    const minD = valid.length ? valid.reduce((a, b) => rate(b) < rate(a) ? b : a) : null, lastD = valid[valid.length - 1];
+    const labels = [lastD, minD !== lastD && minD && rate(minD) < OBJ ? minD : null].filter(Boolean);
+    for (const x of labels) {
+      const k = S.perDay.indexOf(x), r = rate(x);
+      let ly = x === minD ? y(r) + 18 : y(r) - 10;
+      if (Math.abs(ly - 4 - y(OBJ)) < 10) ly = y(OBJ) - 8;
+      const anchor = k > n - 3 ? "end" : k < 2 ? "start" : "middle";
+      g += `<text class="v" x="${cx(k) + (anchor === "end" ? 6 : anchor === "start" ? -6 : 0)}" y="${ly}" text-anchor="${anchor}">${pct(r)}</text>`;
+    }
+    return `<svg width="${W}" height="${H}" role="img" aria-label="Taux de réalisation par jour">${g}</svg>`;
+  },
+  sect(S, W) {
+    const rows = S.perSect, rowH = 36, T = 22, Lw = Math.min(170, W * 0.3), Vw = 130, max = W - Lw - Vw;
+    const x = v => Lw + v * max; let g = "";
+    rows.forEach((s, k) => {
+      const yy = T + k * rowH, r = rate(s), bh = 16;
+      g += `<text class="n" x="0" y="${yy + rowH / 2 + 4}">${esc(s.name)}</text>
+        <g ${tipAttrs(pct(r), `${s.name}|${int(s.done)} faites sur ${int(s.exp)}`)}><rect x="${Lw}" y="${yy}" width="${max + Vw}" height="${rowH}" fill="transparent"/>
+        <path class="mk f-ok" d="${barPath(Lw, yy + (rowH - bh) / 2, x(r), bh)}"/></g>
+        <text class="v" x="${W - 4}" y="${yy + rowH / 2 + 4}" text-anchor="end">${pct(r)}</text>
+        <text x="${W - 50}" y="${yy + rowH / 2 + 4}" text-anchor="end">${int(s.done)}/${int(s.exp)}</text>`;
+    });
+    const H = T + rows.length * rowH + 4;
+    g += `<line class="base" x1="${Lw}" x2="${Lw}" y1="${T - 4}" y2="${H}"/><line class="obj" x1="${x(OBJ)}" x2="${x(OBJ)}" y1="${T - 6}" y2="${H}"/>
+      <text class="k" x="${x(OBJ)}" y="${T - 10}" text-anchor="middle">${CONFIG.OBJECTIF_REALISATION}\u00a0%</text>`;
+    return `<svg width="${W}" height="${H}" role="img" aria-label="Taux de réalisation par secteur">${g}</svg>`;
+  },
+  heat(S, W) {
+    const Lw = 92, Tw = 64, gap = 3, cw = Math.max(34, (W - Lw - Tw - gap * 6) / 7), ch = 40, T = 22;
+    const bucket = r => r == null ? "hx" : r < 0.7 ? "h0" : r < 0.8 ? "h1" : r < 0.9 ? "h2" : r < OBJ ? "h3" : "h4";
+    let g = JOURS.map((j, i) => `<text x="${Lw + i * (cw + gap) + cw / 2}" y="14" text-anchor="middle">${j.slice(0, 3)}.</text>`).join("")
+      + `<text x="${Lw + 7 * (cw + gap) + 8}" y="14">Total</text>`;
+    POSTES.forEach((p, pi) => {
+      const yy = T + pi * (ch + gap);
+      g += `<text class="n" x="0" y="${yy + ch / 2 + 4}">${esc(p.nom)}</text>`;
+      S.grid[pi].forEach((c, i) => {
+        const r = rate(c), b = bucket(r), xx = Lw + i * (cw + gap);
+        g += `<g ${tipAttrs(pct(r), `${p.nom}, le ${JOURS[i]}|${int(c.done)} faites sur ${int(c.exp)}`)}><rect class="mk ${b}" x="${xx}" y="${yy}" width="${cw}" height="${ch}" rx="4"/>
+          <text class="${b === "h3" || b === "h4" ? "w" : "k"}" x="${xx + cw / 2}" y="${yy + ch / 2 + 4}" text-anchor="middle">${r == null ? "—" : Math.round(r * 100)}</text></g>`;
+      });
+      g += `<text class="v" x="${Lw + 7 * (cw + gap) + 8}" y="${yy + ch / 2 + 4}">${pct(rate(S.perPoste[pi]))}</text>`;
+    });
+    return `<svg width="${W}" height="${T + POSTES.length * (ch + gap)}" role="img" aria-label="Taux de réalisation par jour de la semaine et par poste (en %)">${g}</svg>`;
+  },
+  pts(S, W) { return stackBars(S.pts.map(x => ({ name: x.name, HS: x.HS, M: x.M })), W, "check-lists"); },
+  eng(S, W) {
+    const top = S.perEngin.filter(x => x.nbHS + x.nbM).sort((a, b) => (b.nbHS + b.nbM) - (a.nbHS + a.nbM) || b.nbHS - a.nbHS || cmpNat(a.e.nom, b.e.nom)).slice(0, 8);
+    return stackBars(top.map(x => ({ name: x.e.nom, sub: x.e.secteur, HS: x.nbHS, M: x.nbM })), W, "check-lists");
+  }
+};
+function stackBars(items, W, unit) {
+  const rowH = 32, Lw = Math.min(250, Math.max(110, W * 0.42)), Vw = 44, max = W - Lw - Vw, bh = 16;
+  const m = Math.max(1, ...items.map(x => x.HS + x.M)), x = v => Lw + (v / m) * max;
+  let g = "";
+  items.forEach((it, k) => {
+    const yy = k * rowH, by = yy + (rowH - bh) / 2, tot = it.HS + it.M, name = it.sub ? `${it.name} (${it.sub})` : it.name;
+    const label = name.length > Lw / 7 ? name.slice(0, Math.floor(Lw / 7) - 1) + "…" : name;
+    g += `<text class="n" x="0" y="${yy + rowH / 2 + 4}"><title>${esc(name)}</title>${esc(label)}</text>`;
+    const xHS = x(it.HS), gapHS = it.HS && it.M ? 2 : 0;
+    if (it.HS) g += `<g ${tipAttrs(`${int(it.HS)} HS`, `${name}|${int(it.HS)} ${unit} en HS`)}><rect x="${Lw}" y="${yy}" width="${Math.max(8, xHS - Lw)}" height="${rowH}" fill="transparent"/>
+      ${it.M ? `<rect class="mk f-hs" x="${Lw}" y="${by}" width="${Math.max(1, xHS - Lw - gapHS)}" height="${bh}"/>` : `<path class="mk f-hs" d="${barPath(Lw, by, xHS, bh)}"/>`}</g>`;
+    if (it.M) g += `<g ${tipAttrs(`${int(it.M)} M`, `${name}|${int(it.M)} ${unit} en M`)}><rect x="${xHS}" y="${yy}" width="${Math.max(8, x(tot) - xHS)}" height="${rowH}" fill="transparent"/>
+      <path class="mk f-m" d="${barPath(xHS, by, x(tot), bh)}"/></g>`;
+    g += `<text class="v" x="${x(tot) + 8}" y="${yy + rowH / 2 + 4}">${int(tot)}</text>`;
+  });
+  const H = items.length * rowH + 2;
+  g += `<line class="base" x1="${Lw}" x2="${Lw}" y1="0" y2="${H}"/>`;
+  return `<svg width="${W}" height="${H}" role="img" aria-label="Défauts M et HS">${g}</svg>`;
+}
+
+/* ----- infobulle (survol et clavier) ----- */
+function showTip(el, x, y) {
+  const tip = $("#tip"); tip.replaceChildren();
+  const b = document.createElement("b"); b.textContent = el.dataset.tip; tip.append(b);
+  for (const line of (el.dataset.tipSub || "").split("|").filter(Boolean)) { const s = document.createElement("span"); s.textContent = line; tip.append(s); }
+  tip.hidden = false;
+  const r = tip.getBoundingClientRect();
+  let left = x + 14, top = y + 14;
+  if (left + r.width > innerWidth - 8) left = x - r.width - 14;
+  if (top + r.height > innerHeight - 8) top = y - r.height - 14;
+  tip.style.left = Math.max(4, left) + "px"; tip.style.top = Math.max(4, top) + "px";
+}
+document.addEventListener("pointermove", ev => {
+  const el = ev.target.closest && ev.target.closest("[data-tip]");
+  if (el) showTip(el, ev.clientX, ev.clientY); else if (!$("#tip").hidden) $("#tip").hidden = true;
+});
+document.addEventListener("focusin", ev => { const el = ev.target.closest && ev.target.closest("[data-tip]"); if (el) { const r = el.getBoundingClientRect(); showTip(el, r.left + r.width / 2, r.top); } });
+document.addEventListener("focusout", () => { $("#tip").hidden = true; });
+$("#view").addEventListener("scroll", () => { $("#tip").hidden = true; });
+document.addEventListener("keydown", ev => {
+  if ((ev.key === "Enter" || ev.key === " ") && ev.target.matches && ev.target.matches("g[data-act='day']")) { ev.preventDefault(); ev.target.dispatchEvent(new MouseEvent("click", { bubbles: true })); }
+});
+
+/* =====================================================================
    ÉVÉNEMENTS
    ===================================================================== */
 function setDate(d) {
@@ -1082,7 +1465,7 @@ function setDate(d) {
 document.addEventListener("click", ev => {
   const t = ev.target.closest("[data-act],[data-tab]");
   if (!t) return;
-  if (t.dataset.tab) { state.tab = t.dataset.tab; render(); return; }
+  if (t.dataset.tab) { state.tab = t.dataset.tab; $("#tip").hidden = true; render(); return; }
   const a = t.dataset.act;
   if (a === "prev") setDate(addDays(state.date, -1));
   else if (a === "next") setDate(addDays(state.date, 1));
@@ -1096,6 +1479,9 @@ document.addEventListener("click", ev => {
   else if (a === "open") openDetail(t.dataset.e, t.dataset.d, t.dataset.p, t.dataset.id);
   else if (a === "dposte") { state.detail.poste = Number(t.dataset.i); state.detail.id = null; renderDetail(); }
   else if (a === "close") $("#detail").close();
+  else if (a === "periode") { state.periode = Number(t.dataset.n); render(); }
+  else if (a === "tbl") { state.tbl[t.dataset.c] = !state.tbl[t.dataset.c]; renderStatsView(); }
+  else if (a === "day") { state.tab = "jour"; $("#tip").hidden = true; if (t.dataset.d !== state.date) setDate(t.dataset.d); else render(); }
 });
 $("#detail").addEventListener("click", ev => {
   const t = ev.target.closest("[data-act='open']");
@@ -1178,13 +1564,15 @@ function demoStore() {
   const rows = []; let id = 1000;
   const hor = Object.fromEntries(E.map(e => [e[1], e[10]]));
   const n = shiftNow();
-  for (let d = addDays(n.date, -20); d <= n.date; d = addDays(d, 1)) {
+  for (let d = addDays(n.date, -95); d <= n.date; d = addDays(d, 1)) {
+    const wd = (isoDate(d).getDay() + 6) % 7, old = d < addDays(n.date, -45);
     for (const p of POSTES) {
       const st = d < n.date ? "past" : p.i < n.i ? "past" : p.i === n.i ? "current" : "future";
       if (st === "future") continue;
       E.forEach((e, k) => {
         if (/ext/i.test(e[9])) return;                    // engins à l'extérieur : pas de check-list
-        const pDone = st === "current" ? 0.6 : p.i === 2 ? 0.84 : 0.94;
+        const pDone = st === "current" ? 0.6 : 0.965 - (p.i === 2 ? 0.08 : 0) - (wd === 6 ? 0.07 : wd === 5 ? 0.03 : 0)
+          - (e[8] === "Logistique" ? 0.04 : 0) - (old ? 0.05 : 0);
         if (rnd() > pDone) return;
         const num = e[1];
         hor[num] += 6 + Math.floor(rnd() * 3);
