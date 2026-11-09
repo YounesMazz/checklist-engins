@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Check-lists engins de manutention – Lambres 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EDF0ED; --surface:#FFFFFF; --line:#D5DBD6; --line-2:#E7EBE8; --head:#F5F7F5;
+  --ink:#17221D; --ink-2:#4D5A53; --ink-3:#7C8781;
+  --brand:#0E6B43; --brand-2:#0A5233; --brand-soft:#CFE6D9;
+  --yellow:#F5C400; --yellow-soft:#FFF8D9;
+  --ok:#17834A; --ok-bg:#E1F2E7;
+  --m:#975800; --m-solid:#E08A00; --m-bg:#FFF0D6;
+  --hs:#B8231A; --hs-solid:#D42B1E; --hs-bg:#FCE4E1;
+  --fut:#7C8781; --fut-bg:#ECEFED;
+  --cond:"Barlow Condensed","Arial Narrow","Roboto Condensed",system-ui,sans-serif;
+  --body:"Barlow","Segoe UI",system-ui,-apple-system,sans-serif;
+  --r:6px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font:15px/1.45 var(--body);color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+.num{font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+[hidden]{display:none!important}
+
+#app{display:flex;flex-direction:column;height:100vh;min-height:620px}
+
+/* ---------- Barre haute ---------- */
+.top{display:flex;align-items:center;gap:14px 24px;flex-wrap:wrap;padding:12px 24px;background:var(--brand);color:#fff}
+.top h1{font:600 24px/1.1 var(--cond);margin:0;letter-spacing:.005em}
+.top .site{margin:2px 0 0;font-size:14px;color:var(--brand-soft)}
+.datebar{display:flex;align-items:center;gap:6px;margin-left:auto}
+.datebar input{background:#fff;color:var(--ink);border:0;border-radius:var(--r);padding:5px 10px;font:600 17px/1.2 var(--cond);height:36px}
+.btn-top{height:36px;min-width:36px;padding:0 12px;border-radius:var(--r);border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn-top:hover{background:rgba(255,255,255,.2)}
+.btn-top:disabled{opacity:.4;cursor:default}
+.btn-top.square{padding:0}
+.sync{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--brand-soft)}
+.sync.err{color:#FFD7D2}
+.spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- Bandeaux info ---------- */
+.banner{margin:12px 24px 0;padding:10px 14px;border-radius:var(--r);font-size:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.banner.demo{background:var(--yellow-soft);border:1px solid #EBD56B}
+.banner.error{background:var(--hs-bg);border:1px solid #F0B1AA;color:var(--hs)}
+.banner button{border:1px solid currentColor;background:#fff;border-radius:var(--r);padding:3px 10px;color:inherit}
+
+/* ---------- Bandeau des postes ---------- */
+.shifts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) minmax(300px,auto);gap:12px;padding:16px 24px 0}
+.shift{position:relative;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px 12px;display:grid;grid-template-columns:1fr auto;column-gap:12px;align-content:start}
+.shift:hover{border-color:#AEB8B2}
+.shift.is-sel{border-color:var(--ink);box-shadow:inset 0 5px 0 var(--yellow)}
+.shift-name{font:600 21px/1.1 var(--cond);display:flex;align-items:center;gap:8px}
+.shift-hours{font-size:13px;color:var(--ink-3)}
+.shift-count{grid-column:2;grid-row:1/3;align-self:center;font:600 36px/1 var(--cond)}
+.shift-count small{font-size:19px;font-weight:500;color:var(--ink-3)}
+.bar{grid-column:1/-1;display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--fut-bg);margin-top:12px}
+.bar i{display:block;height:100%}
+.b-done{background:var(--ok)}
+.b-miss{background:var(--hs-solid)}
+.b-todo{background:repeating-linear-gradient(-45deg,var(--m-solid) 0 4px,#F6C776 4px 8px)}
+.shift-state{grid-column:1/-1;margin-top:8px;font-size:13.5px;color:var(--ink-2)}
+.shift-state b{font-weight:600}
+.live{width:9px;height:9px;border-radius:50%;background:var(--m-solid);display:inline-block;animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(224,138,0,.55)}70%{box-shadow:0 0 0 8px rgba(224,138,0,0)}100%{box-shadow:0 0 0 0 rgba(224,138,0,0)}}
+.signals{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.signal{text-align:left;background:var(--surface);border:1px solid var(--line);border-left-width:6px;border-radius:var(--r);padding:12px 14px;display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:center;align-content:center}
+.signal b{grid-row:1/3}
+.signal.hs{border-left-color:var(--hs-solid)}
+.signal.m{border-left-color:var(--m-solid)}
+.signal.is-on{border-color:var(--ink);border-left-color:inherit}
+.signal.hs.is-on{border-left-color:var(--hs-solid)} .signal.m.is-on{border-left-color:var(--m-solid)}
+.signal b{font:600 36px/1 var(--cond)}
+.signal.hs b{color:var(--hs)} .signal.m b{color:var(--m)}
+.signal.zero b{color:var(--ink-3)}
+.signal span{font-weight:600;font-size:14.5px;line-height:1.2;align-self:end}
+.signal small{align-self:start}
+.signal small{font-size:13px;color:var(--ink-3)}
+.daysum{padding:10px 24px 0;font-size:14px;color:var(--ink-2)}
+.daysum b{color:var(--ink);font-weight:600}
+
+/* ---------- Onglets & outils ---------- */
+.tabs{display:flex;gap:2px;padding:8px 24px 0;border-bottom:1px solid var(--line)}
+.tab{background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;padding:9px 14px 8px;font:600 17px/1.2 var(--cond);color:var(--ink-2);display:inline-flex;gap:8px;align-items:center}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--brand)}
+.tab .count{font:600 12px/1 var(--body);background:var(--hs-solid);color:#fff;border-radius:999px;padding:3px 7px}
+.tab .count.m{background:var(--m-solid)}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;padding:12px 24px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:14px;line-height:1.3}
+.chip:hover{border-color:#AEB8B2}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.chip .n{color:var(--ink-3);margin-left:5px;font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"] .n{color:#B8C3BD}
+.tools{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.field{height:34px;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:0 10px;font-size:14px}
+input.field{width:150px}
+
+/* ---------- Zone principale ---------- */
+main{flex:1;min-height:280px;overflow:auto;padding:0 24px 24px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+table{width:100%;border-collapse:separate;border-spacing:0}
+th,td{padding:9px 12px;border-bottom:1px solid var(--line-2);text-align:left;vertical-align:middle}
+thead th{position:sticky;top:0;z-index:2;background:var(--head);font:600 15px/1.2 var(--cond);color:var(--ink-2);border-bottom:1px solid var(--line);white-space:nowrap}
+thead th:first-child{border-top-left-radius:var(--r)} thead th:last-child{border-top-right-radius:var(--r)}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:#FAFBFA}
+th.c,td.c{text-align:center}
+th.r,td.r{text-align:right}
+.th-btn{background:none;border:0;padding:0;font:inherit;color:inherit}
+th.col-sel{background:var(--yellow);color:var(--ink)}
+td.col-sel,tbody tr:hover td.col-sel{background:#FFFBEA}
+tr.grp td{background:var(--head);padding:7px 12px;font-size:13.5px;color:var(--ink-2);border-bottom:1px solid var(--line)}
+tr.grp td b{font:600 16px var(--cond);color:var(--ink);margin-right:10px}
+tbody tr.grp:hover td{background:var(--head)}
+.engin{font:600 19px/1.1 var(--cond);letter-spacing:.01em}
+.type{display:inline-block;margin-top:3px;font-size:12px;color:var(--ink-3)}
+.type.out{color:var(--m)}
+.sect{font-size:14px;color:var(--ink-2)}
+.hor{font-size:14px;color:var(--ink-2);white-space:nowrap}
+
+/* pastilles poste */
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 11px 4px 9px;font-size:13.5px;font-weight:600;border:1px solid transparent;background:none;white-space:nowrap;line-height:1.25}
+button.pill:hover{filter:brightness(.96)}
+.p-fait{background:var(--ok-bg);color:var(--ok)}
+.p-nonfait{background:var(--hs-bg);color:var(--hs)}
+.p-afaire{background:#fff;color:var(--m);border:1.5px dashed var(--m-solid)}
+.p-avenir{background:var(--fut-bg);color:var(--fut);font-weight:500}
+.res{font:700 12px/1 var(--body);border-radius:4px;padding:3px 5px;color:#fff;margin-left:2px}
+.res-M{background:var(--m-solid)} .res-HS{background:var(--hs-solid)}
+.mult{font-size:11.5px;font-weight:600;opacity:.75}
+
+/* état du chariot */
+.etat{display:flex;align-items:center;gap:9px;min-width:170px}
+.code{font:700 14px/1 var(--cond);border-radius:4px;padding:5px 0;width:36px;text-align:center;color:#fff;flex:none;letter-spacing:.02em}
+.e-OK{background:var(--ok)} .e-M{background:var(--m-solid)} .e-HS{background:var(--hs-solid)} .e-NA{background:#B7C0BB}
+.etat-t{font-size:14px;font-weight:600;line-height:1.2}
+.etat-s{display:block;font-size:12.5px;font-weight:400;color:var(--ink-3)}
+.btn-link{background:none;border:1px solid var(--line);border-radius:var(--r);padding:5px 10px;font-size:13.5px;font-weight:500;color:var(--brand-2);white-space:nowrap}
+.btn-link:hover{border-color:var(--brand);background:#F3F9F5}
+
+/* vue semaine */
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-size:13px;color:var(--ink-2);margin:2px 0 10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sq{display:inline-block;width:17px;height:17px;border-radius:3px;border:0;padding:0;margin:0 1.5px;vertical-align:middle}
+button.sq:hover{transform:scale(1.15)}
+.s-OK{background:var(--ok)} .s-M{background:var(--m-solid)} .s-HS{background:var(--hs-solid)}
+.s-miss{background:var(--hs-bg);box-shadow:inset 0 0 0 1.5px var(--hs-solid)}
+.s-todo{background:#fff;box-shadow:inset 0 0 0 1.5px var(--m-solid)}
+.s-fut{background:var(--fut-bg)}
+.wk th.day{text-align:center;font-size:14px;line-height:1.15}
+.wk th.day span{display:block;font:500 12.5px var(--body);color:var(--ink-3)}
+.wk th.day.is-d{box-shadow:inset 0 -3px 0 var(--yellow)}
+.wk td.day{text-align:center;padding:8px 6px;white-space:nowrap}
+.wk tfoot td{background:var(--head);font-size:13.5px;font-weight:600;border-top:1px solid var(--line);border-bottom:0}
+.rate{font-weight:600;font-variant-numeric:tabular-nums}
+.rate.good{color:var(--ok)} .rate.mid{color:var(--m)} .rate.bad{color:var(--hs)}
+.rate small{font-weight:400;color:var(--ink-3);margin-left:4px}
+
+/* points à traiter */
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--surface);margin-bottom:10px}
+.seg button{border:0;background:none;padding:6px 14px;font-size:14px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.ans{display:inline-flex;align-items:center;border-radius:999px;padding:3px 10px;font-size:13px;font-weight:600;white-space:nowrap}
+.a-OK{background:var(--ok-bg);color:var(--ok)}
+.a-M{background:var(--m-bg);color:var(--m)}
+.a-HS{background:var(--hs-bg);color:var(--hs)}
+.a-OUI{background:var(--ok-bg);color:var(--ok)}
+.a-NON{background:#fff;color:var(--m);box-shadow:inset 0 0 0 1px #EBC27E}
+.a-NA,.a-NR,.a-INFO{background:var(--fut-bg);color:var(--fut);font-weight:500}
+tr.click{cursor:pointer}
+.com{font-size:13.5px;color:var(--ink-2);max-width:360px}
+
+.empty{padding:40px 20px;text-align:center;color:var(--ink-2)}
+.empty b{display:block;font:600 19px var(--cond);color:var(--ink);margin-bottom:4px}
+.loading{padding:60px 20px;text-align:center;color:var(--ink-3)}
+
+/* ---------- Fiche détail ---------- */
+dialog{border:0;border-radius:10px;padding:0;width:min(880px,96vw);max-height:94vh;color:var(--ink);background:var(--surface);box-shadow:0 24px 70px rgba(8,30,18,.35)}
+dialog::backdrop{background:rgba(14,32,22,.5)}
+.d-head{display:flex;align-items:flex-start;gap:16px;padding:18px 22px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface);z-index:3}
+.d-title{font:600 30px/1 var(--cond);margin:0}
+.d-meta{margin-top:5px;font-size:14px;color:var(--ink-2);display:flex;flex-wrap:wrap;gap:4px 14px}
+.d-close{margin-left:auto;width:36px;height:36px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:20px;line-height:1;flex:none}
+.d-close:hover{background:var(--head)}
+.d-body{padding:16px 22px 22px}
+.hist{display:flex;gap:4px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px}
+.hist-day{flex:1;min-width:76px;text-align:center;padding:6px 4px 7px;border-radius:var(--r);border:1px solid transparent}
+.hist-day.is-d{background:var(--head);border-color:var(--line)}
+.hist-day .lbl{display:block;font-size:12.5px;color:var(--ink-2);margin-bottom:5px;white-space:nowrap}
+.hist-day .sq.is-cur{outline:2px solid var(--ink);outline-offset:1.5px}
+.ptabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.ptab{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:7px 12px;font:600 16px/1.1 var(--cond)}
+.ptab[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 -3px 0 var(--yellow)}
+.alert{display:flex;gap:10px;align-items:center;border-radius:var(--r);padding:11px 14px;font-weight:600;margin-bottom:14px}
+.alert.hs{background:var(--hs-solid);color:#fff}
+.alert.m{background:var(--m-bg);color:var(--m);border:1px solid #F0CE8E}
+.alert.ok{background:var(--ok-bg);color:var(--ok)}
+.meta{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px 18px;margin:0 0 16px}
+.meta div{min-width:0}
+.meta dt{font-size:12.5px;color:var(--ink-3)}
+.meta dd{margin:1px 0 0;font-weight:600;overflow-wrap:anywhere}
+.pts td{padding:8px 10px}
+.pts td:first-child{width:34px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.pts .q{font-weight:600}
+.pts .qs{display:block;font-size:12.5px;color:var(--ink-3);font-weight:400;margin-top:1px}
+.pts tr.is-HS td{background:#FFF6F5} .pts tr.is-M td{background:#FFFBF2}
+.comment{margin-top:14px;padding:12px 14px;background:var(--head);border-radius:var(--r);font-size:14.5px;white-space:pre-wrap}
+.comment b{display:block;font-size:12.5px;color:var(--ink-3);font-weight:400;margin-bottom:2px}
+.photos{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.photos img{height:120px;border-radius:var(--r);border:1px solid var(--line)}
+.d-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:var(--r);border:1px solid var(--line);background:var(--surface);font-weight:500;color:var(--ink);text-decoration:none;font-size:14px}
+.btn:hover{background:var(--head)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.primary:hover{background:var(--brand-2)}
+.saisie{margin:22px 0 10px;padding-top:16px;border-top:1px dashed var(--line);font:600 16px var(--cond);color:var(--ink-2)}
+.saisie:first-child{margin-top:0;padding-top:0;border-top:0}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1180px){
+  .shifts{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .signals{grid-column:1/-1}
+}
+@media (max-width:760px){
+  .top,.shifts,.tabs,.toolbar,.daysum{padding-left:14px;padding-right:14px}
+  main{padding:0 14px 16px}
+  .shifts{grid-template-columns:1fr}
+  .tools{margin-left:0}
+  .datebar{margin-left:0}
+  .pill .lbl{display:none}
+}
+@media (prefers-reduced-motion:reduce){.live,.spin{animation:none}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div>
+      <h1>Suivi des check-lists engins de manutention</h1>
+      <p class="site" id="site-label">Lambres 1</p>
+    </div>
+    <div class="datebar">
+      <button class="btn-top square" data-act="prev" aria-label="Jour précédent">
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <input type="date" id="date" aria-label="Date affichée">
+      <button class="btn-top square" data-act="next" id="btn-next" aria-label="Jour suivant">
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="btn-top" data-act="today" id="btn-today">Poste en cours</button>
+    </div>
+    <div class="sync" id="sync"></div>
+    <a class="btn-top" id="btn-form" target="_blank" rel="noopener" hidden>Remplir une check-list</a>
+  </header>
+
+  <div id="banners"></div>
+  <section class="shifts" id="shifts" aria-label="Avancement par poste"></section>
+  <p class="daysum" id="daysum"></p>
+
+  <nav class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" data-tab="jour">Suivi du jour</button>
+    <button class="tab" role="tab" data-tab="semaine">Semaine</button>
+    <button class="tab" role="tab" data-tab="points">Points à traiter <span class="count" id="pts-count" hidden></span></button>
+  </nav>
+
+  <div class="toolbar">
+    <div class="chips" id="chips" role="group" aria-label="Filtrer par secteur"></div>
+    <div class="tools">
+      <select class="field" id="filtre" aria-label="Filtrer les engins">
+        <option value="tous">Tous les engins</option>
+        <option value="manquante">Check-list manquante</option>
+        <option value="HS">Engins HS</option>
+        <option value="M">Maintenance à prévoir</option>
+      </select>
+      <select class="field" id="tri" aria-label="Trier">
+        <option value="secteur">Trier par secteur</option>
+        <option value="engin">Trier par n° d'engin</option>
+        <option value="etat">HS et maintenance en tête</option>
+        <option value="manquante">Manquantes en tête</option>
+      </select>
+      <input class="field" id="q" type="search" placeholder="N° d'engin" aria-label="Rechercher un engin" autocomplete="off">
+    </div>
+  </div>
+
+  <main id="view" tabindex="-1"></main>
+</div>
+
+<dialog id="detail" aria-labelledby="d-title"></dialog>
+
+<script>
+/* =====================================================================
+   CONFIGURATION — à adapter
+   ===================================================================== */
+const CONFIG = {
+  // URL de ton Worker Cloudflare (sans "/" final). Vide = mode démonstration.
+  API_BASE: "",
+
+  // Alias des tables, tels que déclarés dans worker.js
+  TABLE_CHECKLIST: "checklist",
+  TABLE_ENGINS: "engins",            // null = liste des engins déduite des check-lists saisies
+
+  SITE: "LAMBRES",                   // filtre sur le champ Site ("" = aucun filtre)
+  FUSEAU: "Europe/Paris",
+
+  // Noms des champs de la table "Check List Vérification des engins"
+  CHAMPS_CHECKLIST: {
+    numero: "Numéro check list", site: "Site", engin: "N° Engin", date: "Date",
+    poste: "Poste", secteur: "Secteurs", horametre: "Horamètre", commentaire: "Commentaire"
+  },
+  // Noms des champs de la table "Engins"
+  CHAMPS_ENGINS: {
+    numero: "Numero Engin", caces: "Type", modele: "Modèle", serie: "N° de série", fournisseur: "Fournisseur",
+    secteur: "Secteur", site: "Site", localisation: "Localisation",
+    energie: "Énergie"   // champ absent pour l'instant : à créer (Électrique / Thermique) pour griser les points batterie / huile
+  },
+  // Engins dont la Localisation contient l'un de ces textes : pas de check-list attendue (non comptés)
+  LOCALISATIONS_NON_SUIVIES: ["Extérieur"],
+  // Secteur affiché pour un engin : "engins" = secteur de la table Engins (repli : dernière check-list)
+  //                                   "checklist" = secteur saisi dans la dernière check-list (repli : table Engins)
+  SOURCE_SECTEUR: "engins",
+
+  // Horaires des postes, dans l'ordre de la journée. Un poste qui passe minuit
+  // (Nuit) est rattaché à la date de sa prise de poste.
+  POSTES: [
+    { nom: "Matin",      debut: "05:00", fin: "13:00" },
+    { nom: "Après-midi", debut: "13:00", fin: "21:00" },
+    { nom: "Nuit",       debut: "21:00", fin: "05:00" }
+  ],
+  SECTEURS: ["Assemblage", "En cyclage bouclier", "En cyclage Roue", "Logistique"], // ordre d'affichage
+
+  NON_EST_ANOMALIE: false,   // true = une réponse "Non" compte comme une maintenance à prévoir
+  ACTUALISATION_MIN: 3,      // rafraîchissement automatique (minutes) quand on regarde le jour en cours
+  JOURS_HISTORIQUE: 7,       // profondeur de la vue Semaine et de l'historique engin
+
+  FORMULAIRE_URL: "",        // lien public du formulaire Baserow (optionnel)
+  LIGNE_BASEROW_URL: "",     // ex. "https://table.pingflow.io/database/123/table/456/789/row/{id}" (optionnel)
+  FILTRE_API: true           // filtre les dates côté Baserow (repli automatique si non supporté)
+};
+
+/* =====================================================================
+   OUTILS
+   ===================================================================== */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const norm = s => String(s ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[’`]/g, "'").trim();
+const pad = n => String(n).padStart(2, "0");
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const CF = CONFIG.CHAMPS_CHECKLIST;
+
+function txt(v) {
+  if (v == null) return "";
+  if (Array.isArray(v)) return v.map(txt).filter(Boolean).join(", ");
+  if (typeof v === "object") return txt(v.value ?? v.name ?? v.visible_name ?? "");
+  if (typeof v === "boolean") return v ? "Oui" : "Non";
+  return String(v);
+}
+const linkIds = v => Array.isArray(v) ? v.map(x => x && typeof x === "object" ? x.id : null).filter(x => x != null) : [];
+
+function parseDate(v) {
+  const s = txt(v).trim(); let m;
+  if ((m = s.match(/^(\d{4})-(\d{2})-(\d{2})/))) return `${m[1]}-${m[2]}-${m[3]}`;
+  if ((m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/))) return `${m[3]}-${pad(m[2])}-${pad(m[1])}`;
+  return "";
+}
+const localISO = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+function addDays(iso, n) { const [y, m, d] = iso.split("-").map(Number); return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10); }
+const isoDate = iso => { const [y, m, d] = iso.split("-").map(Number); return new Date(y, m - 1, d, 12); };
+const fmtDate = iso => iso ? iso.split("-").reverse().join("/") : "—";
+const fmtShort = iso => { const [, m, d] = iso.split("-"); return `${d}/${m}`; };
+const fmtWeekday = iso => isoDate(iso).toLocaleDateString("fr-FR", { weekday: "short" });
+const fmtLong = iso => isoDate(iso).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+function fmtNum(v) { const n = Number(String(v).replace(",", ".").replace(/\s/g, "")); return isFinite(n) && String(v).trim() !== "" ? n.toLocaleString("fr-FR") : String(v); }
+const cmpNat = (a, b) => String(a).localeCompare(String(b), "fr", { numeric: true, sensitivity: "base" });
+const plural = (n, one, many) => `${n} ${n > 1 ? many : one}`;
+
+const ICON = {
+  check: '<svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.6l3.2 3.1L13 4.6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  x: '<svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>',
+  clock: '<svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 4.7V8l2.3 1.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  dash: '<svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 8h8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+  warn: '<svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5l8 14.5H2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 8v4.2M10 14.6v.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'
+};
+
+/* =====================================================================
+   POSTES
+   ===================================================================== */
+const toMin = h => { const [a, b] = String(h).split(":").map(Number); return a * 60 + (b || 0); };
+const POSTES = CONFIG.POSTES.map((p, i) => ({ ...p, i, start: toMin(p.debut), end: toMin(p.fin) }));
+
+function shiftNow(now = new Date()) {
+  const t = now.getHours() * 60 + now.getMinutes();
+  let date = localISO(now);
+  for (const p of POSTES) {
+    const wraps = p.end <= p.start;
+    const inside = wraps ? (t >= p.start || t < p.end) : (t >= p.start && t < p.end);
+    if (inside) {
+      if (wraps && t < p.end) date = addDays(date, -1);   // nuit après minuit = journée de la veille
+      return { date, i: p.i };
+    }
+  }
+  return { date, i: 0 };
+}
+/** 'past' | 'current' | 'future' pour un couple (date, poste) */
+function timeState(date, i) {
+  const n = state.now;
+  if (date < n.date) return "past";
+  if (date > n.date) return "future";
+  return i < n.i ? "past" : i === n.i ? "current" : "future";
+}
+function matchPoste(s) {
+  const n = norm(s).replace(/[^a-z]/g, "");
+  if (!n) return null;
+  let p = POSTES.find(p => norm(p.nom).replace(/[^a-z]/g, "") === n);
+  if (!p) p = POSTES.find(p => norm(p.nom).replace(/[^a-z]/g, "").slice(0, 3) === n.slice(0, 3));
+  return p ? p.i : null;
+}
+const posteNom = i => POSTES[i]?.nom ?? "Poste ?";
+
+/* =====================================================================
+   POINTS DE CONTRÔLE
+   ===================================================================== */
+const LIBELLES = [
+  [/nettoyage de l.?engin/, "Nettoyage de l'engin"],
+  [/freinage/, "Freinage à l'essai"],
+  [/klaxon/, "Klaxon"],
+  [/fourche|chaine/, "Fourches, chaînes et circuit"],
+  [/pneu|bandage|jante/, "Pneus, bandages et jantes"],
+  [/niveau d.?eau/, "Niveau d'eau de la batterie"],
+  [/levage|translation|inclinaison/, "Levage (translation, inclinaison)"],
+  [/arret d.?urgence/, "Bouton d'arrêt d'urgence"],
+  [/gyrophare|blue light|eclairage/, "Gyrophare et éclairage"],
+  [/nettoyage du chariot/, "Nettoyage du chariot (hebdo)"],
+  [/etat visuel de la batterie|appoint d.?eau/, "État de la batterie et appoint d'eau (hebdo)"],
+  [/huile|refroidissement/, "Huile, liquide de frein, refroidissement (hebdo)"]
+];
+const shortLabel = q => { const n = norm(q); const hit = LIBELLES.find(([re]) => re.test(n)); return hit ? hit[1] : q.replace(/\s*\(.*?\)\s*/g, " ").trim(); };
+function scopeOf(q) {
+  const n = norm(q);
+  if (/thermique uniquement|huile|refroidissement/.test(n)) return "thermique";
+  if (/batterie/.test(n)) return "electrique";
+  return "all";
+}
+function normStatus(s) {
+  const n = norm(s);
+  if (!n) return "NR";
+  if (/^n\/?a\b|sans objet|non applicable|non concerne/.test(n)) return "NA";
+  if (/^ok\b/.test(n)) return "OK";
+  if (/^hs\b|urgent/.test(n)) return "HS";
+  if (/^m\b|maintenance/.test(n)) return "M";
+  if (/^oui\b/.test(n)) return "OUI";
+  if (/^non\b/.test(n)) return "NON";
+  return "INFO";
+}
+const SEV = { HS: 3, M: 2, NON: CONFIG.NON_EST_ANOMALIE ? 2 : 0 };
+const LEVEL_TXT = { OK: "Apte", M: "Maintenance à prévoir", HS: "Arrêt immédiat" };
+const isQuestion = k => k.includes("?");
+const META_KEYS = new Set(["id", "order", ...Object.values(CF)]);
+
+/* =====================================================================
+   NORMALISATION DES DONNÉES
+   ===================================================================== */
+function normalizeCheck(r) {
+  const enginRaw = r[CF.engin];
+  const points = [], extras = [], files = [];
+  for (const [k, v] of Object.entries(r)) {
+    if (META_KEYS.has(k)) continue;
+    if (Array.isArray(v) && v.length && v[0] && typeof v[0] === "object" && "url" in v[0]) { files.push(...v); continue; }
+    if (isQuestion(k)) { const raw = txt(v); points.push({ question: k, label: shortLabel(k), raw, status: normStatus(raw), scope: scopeOf(k) }); }
+    else if (txt(v) && !/check list|checklist/i.test(k)) extras.push({ k, v: txt(v) });
+  }
+  return {
+    id: r.id, num: txt(r[CF.numero]) || String(r.id),
+    enginId: linkIds(enginRaw)[0] ?? null, enginName: (Array.isArray(enginRaw) ? txt(enginRaw[0]) : txt(enginRaw)).trim(),
+    date: parseDate(r[CF.date]), poste: matchPoste(txt(r[CF.poste])), posteRaw: txt(r[CF.poste]),
+    secteur: txt(r[CF.secteur]), site: txt(r[CF.site]), horametre: txt(r[CF.horametre]),
+    commentaire: txt(r[CF.commentaire]), points, extras, files
+  };
+}
+
+function normalizeEngin(r, linkName) {
+  const EF = CONFIG.CHAMPS_ENGINS;
+  const get = (want, re) => {
+    if (want && want in r) return r[want];
+    const k = Object.keys(r).find(k => re.test(norm(k)));
+    return k ? r[k] : undefined;
+  };
+  let nom = txt(get(EF.numero, /^n(um(ero)?|°|o)\.? ?d?.?engin/)).trim() || linkName.get(r.id) || "";
+  if (!nom) for (const [k, v] of Object.entries(r)) { if (k !== "id" && k !== "order" && (typeof v === "string" || typeof v === "number") && String(v).trim()) { nom = String(v).trim(); break; } }
+  if (!nom) return null;
+  const site = txt(get(EF.site, /^site/));
+  if (CONFIG.SITE && site && !norm(site).includes(norm(CONFIG.SITE))) return null;
+  const actif = get(EF.actif, /^actif|^en service/);
+  if (actif === false || ["non", "inactif", "false"].includes(norm(txt(actif)))) return null;
+  const localisation = txt(get(EF.localisation, /localisation|emplacement/));
+  const energie = txt(get(EF.energie, /energie|motoris/));
+  return {
+    key: "id:" + r.id, rowId: r.id, nom,
+    caces: txt(get(EF.caces, /caces/)), modele: txt(get(EF.modele, /^modele/)).trim(), serie: txt(get(EF.serie, /serie/)),
+    fournisseur: txt(get(EF.fournisseur, /fournisseur|loueur/)), localisation, energie, typeKey: typeKey(energie),
+    secteurRef: txt(get(EF.secteur, /secteur/)), horsRef: false,
+    nonSuivi: !!localisation && (CONFIG.LOCALISATIONS_NON_SUIVIES || []).some(x => norm(localisation).includes(norm(x)))
+  };
+}
+const typeKey = t => { const n = norm(t); return n.includes("therm") ? "thermique" : n.includes("elec") ? "electrique" : ""; };
+
+function evaluate(c) {
+  const t = c.engin?.typeKey || "";
+  let worst = 0, nbM = 0, nbHS = 0;
+  c.pts = c.points.map(p => {
+    const status = t && p.scope !== "all" && p.scope !== t ? "NA" : p.status;
+    const sev = SEV[status] || 0;
+    if (sev === 3) nbHS++; else if (sev === 2) nbM++;
+    worst = Math.max(worst, sev);
+    return { ...p, status, sev };
+  });
+  c.level = worst === 3 ? "HS" : worst === 2 ? "M" : "OK";
+  c.nbM = nbM; c.nbHS = nbHS;
+}
+
+function buildModel(enginRows, checkRows) {
+  const checks = [], linkName = new Map();
+  for (const r of checkRows) {
+    const c = normalizeCheck(r);
+    if (!c.date) continue;
+    if (CONFIG.SITE && c.site && !norm(c.site).includes(norm(CONFIG.SITE))) continue;
+    if (c.enginId != null && c.enginName) linkName.set(c.enginId, c.enginName);
+    checks.push(c);
+  }
+  const engins = [], exclus = [], byId = new Map(), byName = new Map();
+  for (const r of enginRows) {
+    const e = normalizeEngin(r, linkName);
+    if (!e) continue;
+    (e.nonSuivi ? exclus : engins).push(e);
+    byId.set(r.id, e); byName.set(norm(e.nom), e);
+  }
+  const hasRef = engins.length > 0;
+  for (const c of checks) {
+    let e = (c.enginId != null && byId.get(c.enginId)) || byName.get(norm(c.enginName));
+    if (e && e.nonSuivi) continue;              // engin hors site : check-list ignorée
+    if (!e) {
+      if (!c.enginName) continue;
+      e = { key: "n:" + norm(c.enginName), nom: c.enginName, type: "", typeKey: "", secteurRef: "", horsRef: hasRef };
+      engins.push(e); byName.set(norm(c.enginName), e);
+    }
+    c.engin = e;
+  }
+  const sortKey = c => `${c.date}|${c.poste ?? 9}|${String(c.id).padStart(10, "0")}`;
+  const valid = checks.filter(c => c.engin).sort((a, b) => sortKey(a) < sortKey(b) ? -1 : 1);
+  const byCell = new Map(), byEngin = new Map();
+  for (const c of valid) {
+    evaluate(c);
+    if (!byEngin.has(c.engin.key)) byEngin.set(c.engin.key, []);
+    byEngin.get(c.engin.key).push(c);
+    if (c.poste != null) {
+      const k = `${c.engin.key}|${c.date}|${c.poste}`;
+      if (!byCell.has(k)) byCell.set(k, []);
+      byCell.get(k).unshift(c);                 // plus récente en premier
+    }
+  }
+  for (const e of engins) {
+    const list = byEngin.get(e.key) || [];
+    const fromCheck = list.length ? list[list.length - 1].secteur : "";
+    e.secteur = (CONFIG.SOURCE_SECTEUR === "checklist" ? fromCheck || e.secteurRef : e.secteurRef || fromCheck) || "";
+  }
+  const byKey = new Map(engins.map(e => [e.key, e]));
+  return { engins, exclus, checks: valid, byCell, byEngin, byKey };
+}
+
+/* accès au modèle */
+const cellChecks = (e, d, i) => state.model.byCell.get(`${e.key}|${d}|${i}`) || [];
+function lastKnown(e, d) {
+  const list = state.model.byEngin.get(e.key) || [];
+  for (let k = list.length - 1; k >= 0; k--) if (list[k].date <= d) return list[k];
+  return null;
+}
+
+/* =====================================================================
+   CHARGEMENT (Worker Cloudflare → Baserow)
+   ===================================================================== */
+async function api(alias, params = {}) {
+  const url = new URL(CONFIG.API_BASE.replace(/\/+$/, "") + "/rows/" + alias);
+  for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
+  url.searchParams.set("user_field_names", "true");
+  let r;
+  try { r = await fetch(url, { cache: "no-store" }); }
+  catch (e) { const err = new Error("network"); err.network = true; throw err; }
+  if (!r.ok) {
+    const err = new Error("HTTP " + r.status); err.status = r.status;
+    try { const j = await r.json(); err.detail = j.error || j.detail || j.message || JSON.stringify(j); } catch {}
+    throw err;
+  }
+  return r.json();
+}
+async function fetchAll(alias, params = {}, first = null) {
+  const out = []; let page = 1, d = first;
+  while (true) {
+    if (!d) d = await api(alias, { ...params, size: 200, page });
+    out.push(...d.results);
+    if (!d.next || page >= 500) break;
+    page++; d = null;
+  }
+  return out;
+}
+/** Check-lists entre deux dates. Essaie le filtre Baserow, sinon parcourt la table depuis la fin. */
+async function fetchChecks(from, to) {
+  const lo = addDays(from, -1), hi = addDays(to, 1);
+  const inWide = r => { const d = parseDate(r[CF.date]); return d && d >= lo && d <= hi; };
+  if (CONFIG.FILTRE_API) {
+    const filters = JSON.stringify({ filter_type: "AND", filters: [
+      { type: "date_is_on_or_after", field: CF.date, value: `${CONFIG.FUSEAU}?${lo}?exact_date` },
+      { type: "date_is_on_or_before", field: CF.date, value: `${CONFIG.FUSEAU}?${hi}?exact_date` }
+    ] });
+    try {
+      const first = await api(CONFIG.TABLE_CHECKLIST, { filters, size: 200, page: 1 });
+      if (first.results.every(inWide)) return fetchAll(CONFIG.TABLE_CHECKLIST, { filters }, first);
+      console.warn("Filtre de date ignoré par Baserow : parcours de la table.");
+      return scanFromEnd(from, first);
+    } catch (e) {
+      if (e.status !== 400) throw e;
+      console.warn("Filtre de date refusé par Baserow (400) : parcours de la table.", e.detail);
+    }
+  }
+  return scanFromEnd(from);
+}
+async function scanFromEnd(from, head = null) {
+  const size = 200;
+  head = head || await api(CONFIG.TABLE_CHECKLIST, { size, page: 1 });
+  const last = Math.max(1, Math.ceil(head.count / size));
+  const stop = addDays(from, -7), out = [];
+  for (let p = last; p >= 1; p--) {
+    const d = p === 1 ? head : await api(CONFIG.TABLE_CHECKLIST, { size, page: p });
+    out.push(...d.results);
+    const dates = d.results.map(r => parseDate(r[CF.date])).filter(Boolean);
+    if (dates.length && dates.every(x => x < stop)) break;
+  }
+  return out;
+}
+function describeError(e) {
+  if (e.network) return `Impossible de joindre le Worker (${CONFIG.API_BASE}). Vérifie l'URL dans CONFIG.API_BASE et que cette page est bien dans ALLOWED_ORIGINS.`;
+  if (e.status === 401 || (e.status === 403 && !/origine/i.test(e.detail || ""))) return `Baserow refuse l'accès (${e.status}). Vérifie le token BASEROW_TOKEN du Worker et ses droits de lecture sur les deux tables.`;
+  if (e.status === 403) return e.detail;
+  if (e.status === 404) return `Table introuvable (404). Vérifie TABLE_CHECKLIST et TABLE_ENGINS dans les variables du Worker. ${e.detail || ""}`;
+  return `Erreur ${e.status || ""} pendant le chargement. ${e.detail || e.message || ""}`;
+}
+
+/* =====================================================================
+   ÉTAT DE L'APPLICATION
+   ===================================================================== */
+const qs = new URLSearchParams(location.search);
+const DEMO = !CONFIG.API_BASE || qs.has("demo");
+const now0 = shiftNow();
+const state = {
+  now: now0,
+  date: parseDate(qs.get("date")) || now0.date,
+  poste: now0.i,
+  tab: ["jour", "semaine", "points"].includes(qs.get("onglet")) ? qs.get("onglet") : "jour",
+  secteur: qs.get("secteur") || "Tous",
+  filtre: "tous", tri: "secteur", q: "", scope: "actuel",
+  model: null, range: null, loading: false, error: null, updatedAt: null, detail: null
+};
+if (state.date !== now0.date) state.poste = 0;
+const cache = { engins: null, enginsAt: 0 };
+let loadSeq = 0;
+
+async function loadData({ silent = false } = {}) {
+  const to = state.date, from = addDays(to, -(CONFIG.JOURS_HISTORIQUE - 1));
+  const tok = ++loadSeq;
+  state.loading = true;
+  if (!silent) render(); else renderSync();
+  try {
+    let enginRows, checkRows;
+    const inRange = r => { const d = parseDate(r[CF.date]); return d && d >= from && d <= to; };
+    if (DEMO) {
+      const d = demoStore();
+      await sleep(120);
+      enginRows = d.engins; checkRows = d.rows.filter(inRange);
+    } else {
+      const needEngins = CONFIG.TABLE_ENGINS && (!cache.engins || Date.now() - cache.enginsAt > 30 * 60e3);
+      const [er, cr] = await Promise.all([
+        needEngins ? fetchAll(CONFIG.TABLE_ENGINS) : Promise.resolve(cache.engins || []),
+        fetchChecks(from, to)
+      ]);
+      if (needEngins) { cache.engins = er; cache.enginsAt = Date.now(); }
+      enginRows = er; checkRows = cr.filter(inRange);
+    }
+    if (tok !== loadSeq) return;
+    state.model = buildModel(enginRows, checkRows);
+    state.range = { from, to };
+    state.error = null;
+    state.updatedAt = new Date();
+  } catch (e) {
+    if (tok !== loadSeq) return;
+    console.error(e);
+    state.error = describeError(e);
+  } finally {
+    if (tok === loadSeq) { state.loading = false; render(); }
+  }
+}
+
+/* =====================================================================
+   CALCULS
+   ===================================================================== */
+const ready = () => state.model && state.range && state.range.to === state.date;
+const secteurOrder = s => { const i = CONFIG.SECTEURS.findIndex(x => norm(x) === norm(s)); return i < 0 ? (s ? 50 : 99) : i; };
+const sortSecteurs = arr => [...arr].sort((a, b) => secteurOrder(a) - secteurOrder(b) || cmpNat(a, b));
+
+function baseList() {
+  const all = state.model.engins;
+  return state.secteur === "Tous" ? all : all.filter(e => norm(e.secteur) === norm(state.secteur));
+}
+function isMissing(e) {
+  return timeState(state.date, state.poste) !== "future" && !cellChecks(e, state.date, state.poste).length;
+}
+function filtered(list) {
+  const q = norm(state.q);
+  return list.filter(e => {
+    if (q && !norm(e.nom).includes(q)) return false;
+    if (state.filtre === "HS" || state.filtre === "M") { const lk = lastKnown(e, state.date); if (!lk || lk.level !== state.filtre) return false; }
+    if (state.filtre === "manquante" && !isMissing(e)) return false;
+    return true;
+  });
+}
+function sorted(list) {
+  const bySect = (a, b) => secteurOrder(a.secteur) - secteurOrder(b.secteur) || cmpNat(a.secteur, b.secteur);
+  const lvl = e => { const lk = lastKnown(e, state.date); return lk ? ({ HS: 3, M: 2, OK: 0 })[lk.level] : 1; };
+  const out = [...list];
+  if (state.tri === "engin") out.sort((a, b) => cmpNat(a.nom, b.nom));
+  else if (state.tri === "etat") out.sort((a, b) => lvl(b) - lvl(a) || bySect(a, b) || cmpNat(a.nom, b.nom));
+  else if (state.tri === "manquante") out.sort((a, b) => isMissing(b) - isMissing(a) || bySect(a, b) || cmpNat(a.nom, b.nom));
+  else out.sort((a, b) => bySect(a, b) || cmpNat(a.nom, b.nom));
+  return out;
+}
+function dayStats(list, d) {
+  const per = POSTES.map(p => {
+    const st = timeState(d, p.i);
+    let done = 0;
+    for (const e of list) if (cellChecks(e, d, p.i).length) done++;
+    const total = list.length;
+    return { p, st, done, total, miss: st === "past" ? total - done : 0, todo: st === "current" ? total - done : 0 };
+  });
+  let hs = 0, m = 0;
+  for (const e of list) { const lk = lastKnown(e, d); if (lk?.level === "HS") hs++; else if (lk?.level === "M") m++; }
+  const expected = per.filter(x => x.st !== "future").reduce((s, x) => s + x.total, 0);
+  const done = per.filter(x => x.st !== "future").reduce((s, x) => s + x.done, 0);
+  const miss = per.reduce((s, x) => s + x.miss, 0);
+  return { per, hs, m, expected, done, miss };
+}
+function anomalyItems(list) {
+  const items = [];
+  const push = (e, c) => { for (const p of c.pts) if (p.sev >= 2) items.push({ e, c, p }); };
+  if (state.scope === "actuel") { for (const e of list) { const lk = lastKnown(e, state.date); if (lk) push(e, lk); } }
+  else for (const e of list) for (const c of state.model.byEngin.get(e.key) || []) if (c.date <= state.date) push(e, c);
+  return items;
+}
+const rateClass = r => r >= 0.95 ? "good" : r >= 0.8 ? "mid" : "bad";
+
+/* =====================================================================
+   RENDU
+   ===================================================================== */
+function render() {
+  $("#date").value = state.date;
+  $("#date").max = addDays(state.now.date, 1);
+  $("#btn-next").disabled = state.date >= addDays(state.now.date, 1);
+  $("#btn-today").disabled = state.date === state.now.date && state.poste === state.now.i;
+  $("#filtre").value = state.filtre; $("#tri").value = state.tri;
+  if ($("#q").value !== state.q) $("#q").value = state.q;
+  document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.tab === state.tab)));
+  if (CONFIG.FORMULAIRE_URL) { const a = $("#btn-form"); a.hidden = false; a.href = CONFIG.FORMULAIRE_URL; }
+  renderSync(); renderBanners();
+  if (!ready()) {
+    $("#shifts").innerHTML = ""; $("#daysum").textContent = ""; $("#chips").innerHTML = "";
+    $("#view").innerHTML = state.error ? "" : `<div class="loading">Chargement des check-lists…</div>`;
+    return;
+  }
+  const list = baseList();
+  renderShifts(list); renderChips();
+  const n = anomalyItems(filtered(list)).length;
+  const cnt = $("#pts-count");
+  const hasHS = anomalyItems(list).some(x => x.p.sev === 3);
+  cnt.hidden = !n; cnt.textContent = n; cnt.className = "count" + (hasHS ? "" : " m");
+  $("#filtre").options[1].disabled = state.tab === "points";
+  const view = $("#view");
+  const scroll = view.scrollTop;
+  view.innerHTML = state.tab === "semaine" ? viewWeek(list) : state.tab === "points" ? viewPoints(list) : viewDay(list);
+  view.scrollTop = scroll;
+  if (state.detail && $("#detail").open) renderDetail();
+}
+
+function renderSync() {
+  const el = $("#sync");
+  if (state.loading) { el.className = "sync"; el.innerHTML = `<span class="spin" aria-hidden="true"></span>Chargement…`; return; }
+  el.className = "sync" + (state.error ? " err" : "");
+  const t = state.updatedAt ? state.updatedAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : "—";
+  el.innerHTML = `<span>${state.error ? "Échec de l'actualisation" : "Mis à jour à " + t}</span>
+    <button class="btn-top" data-act="refresh">Actualiser</button>`;
+}
+function renderBanners() {
+  let h = "";
+  if (DEMO) h += `<div class="banner demo"><b>Mode démonstration</b><span>Check-lists fictives générées sur ton parc réel (export Engins du 09/11) + les 6 lignes réelles du 01/10/2026. Renseigne <code>CONFIG.API_BASE</code> pour lire la table Baserow.</span></div>`;
+  if (state.error) h += `<div class="banner error">${ICON.warn}<span>${esc(state.error)}</span><button data-act="refresh">Réessayer</button></div>`;
+  $("#banners").innerHTML = h;
+}
+
+function renderShifts(list) {
+  const s = dayStats(list, state.date);
+  const cards = s.per.map(x => {
+    const sel = x.p.i === state.poste;
+    const pct = v => x.total ? (v / x.total * 100).toFixed(2) + "%" : "0%";
+    let bar = `<i class="b-done" style="width:${pct(x.done)}"></i>`;
+    if (x.st === "past") bar += `<i class="b-miss" style="width:${pct(x.miss)}"></i>`;
+    if (x.st === "current") bar += `<i class="b-todo" style="width:${pct(x.todo)}"></i>`;
+    let stTxt;
+    if (x.st === "future") stTxt = "À venir";
+    else if (x.st === "current") stTxt = x.todo ? `En cours : <b>${plural(x.todo, "check-list restante", "check-lists restantes")}</b>` : "En cours : toutes les check-lists sont faites";
+    else stTxt = x.miss ? `Terminé : <b>${plural(x.miss, "check-list non faite", "check-lists non faites")}</b>` : (x.total ? "Terminé : toutes les check-lists sont faites" : "Terminé");
+    return `<button class="shift${sel ? " is-sel" : ""}" data-act="poste" data-i="${x.p.i}" aria-pressed="${sel}">
+      <span class="shift-name">${esc(x.p.nom)}${x.st === "current" ? '<span class="live" title="Poste en cours"></span>' : ""}</span>
+      <span class="shift-hours">${esc(x.p.debut)} – ${esc(x.p.fin)}</span>
+      <span class="shift-count num">${x.done}<small>/${x.total}</small></span>
+      <span class="bar" aria-hidden="true">${bar}</span>
+      <span class="shift-state">${stTxt}</span>
+    </button>`;
+  }).join("");
+  const on = f => state.filtre === f ? " is-on" : "";
+  const signals = `<div class="signals">
+    <button class="signal hs${s.hs ? "" : " zero"}${on("HS")}" data-act="sig" data-f="HS" aria-pressed="${state.filtre === "HS"}">
+      <b class="num">${s.hs}</b><span>${s.hs > 1 ? "Engins HS" : "Engin HS"}</span><small>arrêt immédiat</small></button>
+    <button class="signal m${s.m ? "" : " zero"}${on("M")}" data-act="sig" data-f="M" aria-pressed="${state.filtre === "M"}">
+      <b class="num">${s.m}</b><span>Maintenance</span><small>à prévoir</small></button>
+  </div>`;
+  $("#shifts").innerHTML = cards + signals;
+  const sum = $("#daysum");
+  if (!s.expected) sum.innerHTML = `Journée du ${esc(fmtLong(state.date))} : à venir.`;
+  else sum.innerHTML = `Journée du ${esc(fmtLong(state.date))} : <b>${s.done}</b> ${s.done > 1 ? "check-lists faites" : "check-list faite"} sur ${s.expected} ${s.expected > 1 ? "attendues" : "attendue"}`
+    + ` (<span class="rate ${rateClass(s.done / s.expected)}">${Math.round(s.done / s.expected * 100)} %</span>)`
+    + (s.miss ? `, dont <b>${s.miss}</b> ${s.miss > 1 ? "non faites" : "non faite"} sur les postes terminés.` : ".");
+  const ex = state.model.exclus;
+  if (ex.length) sum.innerHTML += ` <span title="${esc(ex.map(e => `${e.nom} : ${e.localisation}`).join("\n"))}">${ex.length > 1 ? `${ex.length} engins hors site ne sont pas suivis` : "1 engin hors site n'est pas suivi"} (${esc(ex.map(e => e.nom).join(", "))}).</span>`;
+}
+
+function renderChips() {
+  const all = state.model.engins;
+  const counts = new Map();
+  for (const e of all) counts.set(e.secteur || "", (counts.get(e.secteur || "") || 0) + 1);
+  const secs = sortSecteurs([...counts.keys()].filter(Boolean));
+  if (counts.has("")) secs.push("");
+  if (state.secteur !== "Tous" && !secs.some(s => norm(s) === norm(state.secteur))) secs.push(state.secteur);
+  const chip = (val, label, n) => `<button class="chip" data-act="secteur" data-s="${esc(val)}" aria-pressed="${norm(state.secteur) === norm(val)}">${esc(label)}<span class="n">${n}</span></button>`;
+  $("#chips").innerHTML = chip("Tous", "Tous", all.length) + secs.map(s => chip(s, s || "Sans secteur", counts.get(s) || 0)).join("");
+}
+
+/* ----- Vue du jour ----- */
+function cellHtml(e, d, i) {
+  const list = cellChecks(e, d, i), st = timeState(d, i);
+  const cls = i === state.poste ? ' class="c col-sel"' : ' class="c"';
+  const attrs = `data-act="open" data-e="${esc(e.key)}" data-d="${d}" data-p="${i}"`;
+  if (list.length) {
+    const c = list[0];
+    const res = c.level !== "OK" ? `<span class="res res-${c.level}">${c.level}</span>` : "";
+    const mult = list.length > 1 ? `<span class="mult" title="${list.length} check-lists saisies">×${list.length}</span>` : "";
+    return `<td${cls}><button class="pill p-fait" ${attrs} title="Voir la check-list">${ICON.check}<span class="lbl">Fait</span>${res}${mult}</button></td>`;
+  }
+  if (st === "past") return `<td${cls}><button class="pill p-nonfait" ${attrs}>${ICON.x}<span class="lbl">Non fait</span></button></td>`;
+  if (st === "current") return `<td${cls}><button class="pill p-afaire" ${attrs}>${ICON.clock}<span class="lbl">À faire</span></button></td>`;
+  return `<td${cls}><span class="pill p-avenir">${ICON.dash}<span class="lbl">À venir</span></span></td>`;
+}
+function etatHtml(lk, d) {
+  if (!lk) return `<div class="etat"><span class="code e-NA">?</span><span class="etat-t">Aucun relevé<span class="etat-s">sur ${CONFIG.JOURS_HISTORIQUE} jours</span></span></div>`;
+  const when = lk.date === d ? `Relevé ${posteNom(lk.poste)}` : `Relevé du ${fmtShort(lk.date)}, ${posteNom(lk.poste)}`;
+  const det = lk.level === "HS" ? ` (${plural(lk.nbHS, "point HS", "points HS")})` : lk.level === "M" ? ` (${plural(lk.nbM, "point", "points")})` : "";
+  return `<div class="etat"><span class="code e-${lk.level}">${lk.level}</span><span class="etat-t">${LEVEL_TXT[lk.level]}<span class="etat-s">${esc(when)}${det}</span></span></div>`;
+}
+function enginCell(e) {
+  const t = e.horsRef ? `<span class="type out" title="Engin présent dans les check-lists mais absent de la table Engins">Hors table Engins</span>`
+    : e.caces || e.modele ? `<span class="type">${esc([e.caces, e.modele].filter(Boolean).join(", "))}</span>` : "";
+  return `<td><div class="engin num">${esc(e.nom)}</div>${t}</td>`;
+}
+function viewDay(list) {
+  const d = state.date, rows = sorted(filtered(list));
+  if (!state.model.engins.length) return emptyBox("Aucun engin trouvé", "Vérifie la table Engins ou les champs déclarés dans CONFIG.");
+  if (!rows.length) return emptyBox("Aucun engin ne correspond aux filtres", "Change de secteur ou efface la recherche.");
+  const head = POSTES.map(p => `<th class="c${p.i === state.poste ? " col-sel" : ""}"><button class="th-btn" data-act="poste" data-i="${p.i}">${esc(p.nom)}</button></th>`).join("");
+  const group = state.tri === "secteur" && state.secteur === "Tous";
+  let body = "", last = null;
+  for (const e of rows) {
+    if (group && e.secteur !== last) {
+      last = e.secteur;
+      const g = rows.filter(x => x.secteur === last);
+      const st = timeState(d, state.poste);
+      const done = g.filter(x => cellChecks(x, d, state.poste).length).length;
+      const info = st === "future" ? `${plural(g.length, "engin", "engins")}` : `${done} sur ${g.length} faites au poste ${esc(posteNom(state.poste))}`;
+      body += `<tr class="grp"><td colspan="${POSTES.length + 4}"><b>${esc(last || "Sans secteur")}</b>${info}</td></tr>`;
+    }
+    const lk = lastKnown(e, d);
+    body += `<tr>${enginCell(e)}${group ? "" : `<td class="sect">${esc(e.secteur || "—")}</td>`}
+      ${POSTES.map(p => cellHtml(e, d, p.i)).join("")}
+      <td>${etatHtml(lk, d)}</td>
+      <td class="hor r num">${lk && lk.horametre ? esc(fmtNum(lk.horametre)) + " h" : "—"}</td>
+      <td class="r"><button class="btn-link" data-act="detail" data-e="${esc(e.key)}">Voir détail</button></td></tr>`;
+  }
+  return `<div class="card"><table>
+    <thead><tr><th>N° engin</th>${group ? "" : "<th>Secteur</th>"}${head}<th>État du chariot</th><th class="r">Horamètre</th><th class="r"><span hidden>Détail</span></th></tr></thead>
+    <tbody>${body}</tbody></table></div>`;
+}
+
+/* ----- Vue semaine ----- */
+function squareHtml(e, d, i, extraCls = "") {
+  const list = cellChecks(e, d, i), st = timeState(d, i);
+  let cls, lab;
+  if (list.length) { cls = "s-" + list[0].level; lab = "fait, " + LEVEL_TXT[list[0].level].toLowerCase(); }
+  else if (st === "past") { cls = "s-miss"; lab = "non fait"; }
+  else if (st === "current") { cls = "s-todo"; lab = "à faire (poste en cours)"; }
+  else { cls = "s-fut"; lab = "à venir"; }
+  const title = `${fmtWeekday(d)} ${fmtShort(d)}, ${posteNom(i)} : ${lab}`;
+  if (cls === "s-fut") return `<span class="sq ${cls}" title="${esc(title)}"></span>`;
+  return `<button class="sq ${cls}${extraCls}" data-act="open" data-e="${esc(e.key)}" data-d="${d}" data-p="${i}" title="${esc(title)}" aria-label="${esc(title)}"></button>`;
+}
+function weekDays() { const out = []; for (let k = CONFIG.JOURS_HISTORIQUE - 1; k >= 0; k--) out.push(addDays(state.date, -k)); return out; }
+function viewWeek(list) {
+  const rows = sorted(filtered(list)), days = weekDays();
+  if (!rows.length) return emptyBox("Aucun engin ne correspond aux filtres", "Change de secteur ou efface la recherche.");
+  const head = days.map(d => `<th class="day${d === state.date ? " is-d" : ""}">${esc(fmtWeekday(d))}<span>${fmtShort(d)}</span></th>`).join("");
+  const rateHtml = (done, exp) => exp ? `<span class="rate ${rateClass(done / exp)}">${Math.round(done / exp * 100)} %<small>${done}/${exp}</small></span>` : `<span class="rate">—</span>`;
+  const body = rows.map(e => {
+    let done = 0, exp = 0;
+    const cells = days.map(d => `<td class="day">${POSTES.map(p => {
+      if (timeState(d, p.i) !== "future") { exp++; if (cellChecks(e, d, p.i).length) done++; }
+      return squareHtml(e, d, p.i);
+    }).join("")}</td>`).join("");
+    return `<tr>${enginCell(e)}<td class="sect">${esc(e.secteur || "—")}</td>${cells}<td class="r">${rateHtml(done, exp)}</td></tr>`;
+  }).join("");
+  let tDone = 0, tExp = 0;
+  const foot = days.map(d => {
+    let done = 0, exp = 0;
+    for (const e of rows) for (const p of POSTES) if (timeState(d, p.i) !== "future") { exp++; if (cellChecks(e, d, p.i).length) done++; }
+    tDone += done; tExp += exp;
+    return `<td class="day">${exp ? `<span class="rate ${rateClass(done / exp)}">${Math.round(done / exp * 100)} %</span>` : "—"}</td>`;
+  }).join("");
+  return `<div class="legend">
+      <span>Chaque jour, de gauche à droite : ${POSTES.map(p => esc(p.nom)).join(", ")}.</span>
+      <span><i class="sq s-OK"></i>Fait, apte</span><span><i class="sq s-M"></i>Fait, maintenance</span><span><i class="sq s-HS"></i>Fait, HS</span>
+      <span><i class="sq s-miss"></i>Non fait</span><span><i class="sq s-todo"></i>À faire</span><span><i class="sq s-fut"></i>À venir</span>
+    </div>
+    <div class="card"><table class="wk">
+    <thead><tr><th>N° engin</th><th>Secteur</th>${head}<th class="r">Réalisation</th></tr></thead>
+    <tbody>${body}</tbody>
+    <tfoot><tr><td colspan="2">Taux de réalisation</td>${foot}<td class="r">${rateHtml(tDone, tExp)}</td></tr></tfoot>
+    </table></div>`;
+}
+
+/* ----- Points à traiter ----- */
+function viewPoints(list) {
+  let items = anomalyItems(filtered(list));
+  if (state.filtre === "HS") items = items.filter(x => x.p.sev === 3);
+  if (state.filtre === "M") items = items.filter(x => x.p.sev === 2);
+  items.sort((a, b) => b.p.sev - a.p.sev || (a.c.date < b.c.date ? 1 : a.c.date > b.c.date ? -1 : 0) || (b.c.poste ?? 0) - (a.c.poste ?? 0) || cmpNat(a.e.nom, b.e.nom));
+  const seg = `<div class="seg" role="group" aria-label="Période">
+    <button data-act="scope" data-s="actuel" aria-pressed="${state.scope === "actuel"}">État actuel (dernier relevé par engin)</button>
+    <button data-act="scope" data-s="histo" aria-pressed="${state.scope === "histo"}">Tous les relevés sur ${CONFIG.JOURS_HISTORIQUE} jours</button></div>`;
+  if (!items.length) return seg + emptyBox("Aucun point HS ou en maintenance", state.scope === "actuel" ? "Le dernier relevé de chaque engin affiché est conforme." : "Aucune anomalie relevée sur la période.");
+  const body = items.map(({ e, c, p }) => `<tr class="click" data-act="open" data-e="${esc(e.key)}" data-d="${c.date}" data-p="${c.poste ?? ""}" data-id="${c.id}">
+      <td><span class="ans a-${p.status}">${p.status === "HS" ? "HS" : p.status === "NON" ? "Non" : "M"}</span></td>
+      <td><b>${esc(p.label)}</b></td>
+      <td><span class="engin num" style="font-size:17px">${esc(e.nom)}</span></td>
+      <td class="sect">${esc(e.secteur || "—")}</td>
+      <td class="sect">${esc(fmtWeekday(c.date))} ${fmtShort(c.date)}, ${esc(posteNom(c.poste))}</td>
+      <td class="com">${esc(c.commentaire || "—")}</td></tr>`).join("");
+  return seg + `<div class="card"><table>
+    <thead><tr><th>Statut</th><th>Point de contrôle</th><th>N° engin</th><th>Secteur</th><th>Relevé</th><th>Commentaire</th></tr></thead>
+    <tbody>${body}</tbody></table></div>`;
+}
+const emptyBox = (t, s) => `<div class="card empty"><b>${esc(t)}</b>${esc(s)}</div>`;
+
+/* ----- Fiche détail ----- */
+function openDetail(key, date, poste, id) {
+  const e = state.model.byKey.get(key);
+  if (!e) return;
+  if (poste == null || poste === "") {
+    const here = POSTES.map(p => p.i).filter(i => cellChecks(e, date, i).length);
+    poste = cellChecks(e, date, state.poste).length ? state.poste : here.length ? here[here.length - 1] : state.poste;
+  }
+  state.detail = { key, date, poste: Number(poste), id: id ? Number(id) : null };
+  renderDetail();
+  const dlg = $("#detail");
+  if (!dlg.open) dlg.showModal();
+}
+function formUrl(e, d, i) {
+  if (!CONFIG.FORMULAIRE_URL) return "";
+  const u = new URL(CONFIG.FORMULAIRE_URL);
+  u.searchParams.set("prefill_" + CF.engin, e.nom);
+  u.searchParams.set("prefill_" + CF.poste, posteNom(i));
+  u.searchParams.set("prefill_" + CF.date, d);
+  return u.toString();
+}
+function renderDetail() {
+  const { key, date, poste, id } = state.detail;
+  const e = state.model.byKey.get(key);
+  if (!e) return;
+  const lk = lastKnown(e, state.date);
+  const hist = weekDays().map(d => `<div class="hist-day${d === date ? " is-d" : ""}"><span class="lbl">${esc(fmtWeekday(d))} ${fmtShort(d)}</span>${
+    POSTES.map(p => squareHtml(e, d, p.i, d === date && p.i === poste ? " is-cur" : "")).join("")}</div>`).join("");
+  const ptabs = POSTES.map(p => {
+    const l = cellChecks(e, date, p.i), st = timeState(date, p.i);
+    const ic = l.length ? `<span class="code e-${l[0].level}" style="width:auto;padding:3px 5px;font-size:12px">${l[0].level}</span>`
+      : st === "past" ? `<span style="color:var(--hs)">${ICON.x}</span>` : st === "current" ? `<span style="color:var(--m)">${ICON.clock}</span>` : `<span style="color:var(--fut)">${ICON.dash}</span>`;
+    return `<button class="ptab" data-act="dposte" data-i="${p.i}" aria-pressed="${p.i === poste}">${esc(p.nom)} ${ic}</button>`;
+  }).join("");
+
+  let list = cellChecks(e, date, poste);
+  if (id) { const sel = state.model.byEngin.get(key)?.find(c => c.id === id); if (sel && !list.includes(sel)) list = [sel]; }
+  let body;
+  if (!list.length) {
+    const st = timeState(date, poste);
+    const msg = st === "past" ? ["Check-list non faite", `Aucune check-list n'a été saisie pour le poste ${posteNom(poste)} du ${fmtDate(date)}.`]
+      : st === "current" ? ["Check-list à faire", `Le poste ${posteNom(poste)} est en cours et la check-list n'est pas encore saisie.`]
+      : ["Poste à venir", `Le poste ${posteNom(poste)} du ${fmtDate(date)} n'a pas commencé.`];
+    const f = st !== "future" ? formUrl(e, date, poste) : "";
+    body = `<div class="card empty"><b>${esc(msg[0])}</b>${esc(msg[1])}${f ? `<div class="d-actions" style="justify-content:center"><a class="btn primary" href="${esc(f)}" target="_blank" rel="noopener">Remplir la check-list</a></div>` : ""}</div>`;
+  } else {
+    body = list.map((c, k) => checkHtml(c, k, list.length)).join("");
+  }
+
+  $("#detail").innerHTML = `
+    <div class="d-head">
+      <div>
+        <h2 class="d-title num" id="d-title">Engin ${esc(e.nom)}</h2>
+        <div class="d-meta">
+          <span>${esc(e.secteur || "Sans secteur")}</span>
+          ${[e.caces, e.modele && "Modèle " + e.modele, e.serie && "N° de série " + e.serie, e.fournisseur, e.energie].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}
+          <span>${lk ? `État au ${fmtShort(state.date)} : <b>${LEVEL_TXT[lk.level]}</b>` : "Aucun relevé récent"}</span>
+        </div>
+      </div>
+      <button class="d-close" data-act="close" aria-label="Fermer">×</button>
+    </div>
+    <div class="d-body">
+      <div class="hist" aria-label="Historique ${CONFIG.JOURS_HISTORIQUE} jours">${hist}</div>
+      <div class="ptabs" role="group" aria-label="Poste du ${fmtDate(date)}">${ptabs}</div>
+      ${body}
+    </div>`;
+}
+function checkHtml(c, k, n) {
+  const alert = c.level === "HS" ? `<div class="alert hs">${ICON.warn}Arrêt immédiat de l'engin : prévenir le responsable.</div>`
+    : c.level === "M" ? `<div class="alert m">${ICON.warn}Maintenance à prévoir sur ${plural(c.nbM, "point", "points")}.</div>`
+    : `<div class="alert ok">${ICON.check}Tous les points sont conformes.</div>`;
+  const meta = [
+    ["N° check-list", c.num], ["Date", fmtDate(c.date)], ["Poste", c.poste != null ? posteNom(c.poste) : c.posteRaw || "—"],
+    ["Secteur", c.secteur || "—"], ["Horamètre", c.horametre ? fmtNum(c.horametre) + " h" : "—"], ...c.extras.map(x => [x.k, x.v])
+  ].map(([t, v]) => `<div><dt>${esc(t)}</dt><dd>${esc(v)}</dd></div>`).join("");
+  const ansTxt = p => p.status === "NA" ? "Non concerné" : p.status === "NR" ? "Non renseigné" : p.raw;
+  const pts = c.pts.map((p, j) => `<tr class="is-${p.status}"><td>${j + 1}</td>
+      <td><span class="q">${esc(p.label)}</span><span class="qs">${esc(p.question)}</span></td>
+      <td class="r"><span class="ans a-${p.status}">${esc(ansTxt(p))}</span></td></tr>`).join("");
+  const photos = c.files.filter(f => f.is_image !== false && (f.thumbnails?.small?.url || f.url));
+  const link = CONFIG.LIGNE_BASEROW_URL ? CONFIG.LIGNE_BASEROW_URL.replace("{id}", c.id) : "";
+  return `${n > 1 ? `<div class="saisie">Saisie ${k + 1} sur ${n}${k === 0 ? " (la plus récente)" : ""}, n° ${esc(c.num)}</div>` : ""}
+    ${alert}
+    <dl class="meta">${meta}</dl>
+    <div class="card"><table class="pts"><tbody>${pts || `<tr><td colspan="3">Aucun point de contrôle trouvé.</td></tr>`}</tbody></table></div>
+    ${c.commentaire ? `<div class="comment"><b>Commentaire</b>${esc(c.commentaire)}</div>` : ""}
+    ${photos.length ? `<div class="photos">${photos.map(f => `<a href="${esc(f.url)}" target="_blank" rel="noopener"><img src="${esc(f.thumbnails?.card_cover?.url || f.thumbnails?.small?.url || f.url)}" alt="${esc(f.visible_name || "Photo")}"></a>`).join("")}</div>` : ""}
+    ${link ? `<div class="d-actions"><a class="btn" href="${esc(link)}" target="_blank" rel="noopener">Ouvrir la ligne dans Baserow</a></div>` : ""}`;
+}
+
+/* =====================================================================
+   ÉVÉNEMENTS
+   ===================================================================== */
+function setDate(d) {
+  if (!d || d === state.date) return;
+  state.date = d;
+  loadData();
+}
+document.addEventListener("click", ev => {
+  const t = ev.target.closest("[data-act],[data-tab]");
+  if (!t) return;
+  if (t.dataset.tab) { state.tab = t.dataset.tab; render(); return; }
+  const a = t.dataset.act;
+  if (a === "prev") setDate(addDays(state.date, -1));
+  else if (a === "next") setDate(addDays(state.date, 1));
+  else if (a === "today") { state.poste = state.now.i; if (state.date !== state.now.date) setDate(state.now.date); else render(); }
+  else if (a === "refresh") loadData();
+  else if (a === "poste") { state.poste = Number(t.dataset.i); render(); }
+  else if (a === "sig") { state.filtre = state.filtre === t.dataset.f ? "tous" : t.dataset.f; if (state.tab === "semaine") state.tab = "jour"; render(); }
+  else if (a === "secteur") { state.secteur = t.dataset.s; render(); }
+  else if (a === "scope") { state.scope = t.dataset.s; render(); }
+  else if (a === "detail") openDetail(t.dataset.e, state.date, null);
+  else if (a === "open") openDetail(t.dataset.e, t.dataset.d, t.dataset.p, t.dataset.id);
+  else if (a === "dposte") { state.detail.poste = Number(t.dataset.i); state.detail.id = null; renderDetail(); }
+  else if (a === "close") $("#detail").close();
+});
+$("#detail").addEventListener("click", ev => {
+  const t = ev.target.closest("[data-act='open']");
+  if (t) { ev.stopPropagation(); state.detail = { key: t.dataset.e, date: t.dataset.d, poste: Number(t.dataset.p), id: null }; renderDetail(); }
+  else if (ev.target === ev.currentTarget) ev.currentTarget.close();   // clic sur le fond
+}, true);
+$("#detail").addEventListener("close", () => { state.detail = null; });
+$("#date").addEventListener("change", ev => setDate(ev.target.value));
+$("#filtre").addEventListener("change", ev => { state.filtre = ev.target.value; render(); });
+$("#tri").addEventListener("change", ev => { state.tri = ev.target.value; render(); });
+$("#q").addEventListener("input", ev => { state.q = ev.target.value; render(); });
+
+// Changement de poste et actualisation automatique
+let lastRefresh = Date.now();
+setInterval(() => {
+  const n = shiftNow(), changed = n.date !== state.now.date || n.i !== state.now.i;
+  const followLive = state.date === state.now.date && state.poste === state.now.i;
+  state.now = n;
+  if (changed && followLive) { state.poste = n.i; if (state.date !== n.date) { setDate(n.date); return; } }
+  const due = Date.now() - lastRefresh > CONFIG.ACTUALISATION_MIN * 60e3;
+  if (state.date >= addDays(n.date, -1) && (due || changed) && !state.loading && !$("#detail").open) { lastRefresh = Date.now(); loadData({ silent: true }); }
+  else if (changed && ready()) render();
+}, 30e3);
+
+/* =====================================================================
+   DONNÉES DE DÉMONSTRATION (utilisées si CONFIG.API_BASE est vide)
+   ===================================================================== */
+let _demo = null;
+function demoStore() {
+  if (_demo) return _demo;
+  const Q = [
+    "Le nettoyage de l'engin a-t-il été effectué ?", "Le freinage fonctionne-t-il correctement à l'essai ?", "Le klaxon fonctionne-t-il ?",
+    "L'état visuel des fourches, chaînes et circuit est-il correct ?", "L'état visuel des pneus, bandages et jantes est-il correct ?",
+    "Le niveau d'eau de la batterie est-il correct ?", "Les mouvements de levage (translation, inclinaison) fonctionnent-ils correctement ?",
+    "Le bouton d'arrêt d'urgence fonctionne-t-il ?", "Le gyrophare (ou blue light) et l'éclairage fonctionnent-ils ?",
+    "Le nettoyage du chariot a-t-il été effectué ?",
+    "L'état visuel de la batterie (casse, câblage, mains de chargement) est-il correct ? Appoint d'eau fait ? (2 champs : OK/M/HS + Oui/Non)",
+    "Les niveaux d'huile, de liquide de frein et de refroidissement sont-ils corrects ? (chariot thermique uniquement : masquer si engin électrique)"
+  ];
+  const OK = { id: 1, value: "OK (fonction correcte)", color: "green" }, M = { id: 2, value: "M (maintenance à prévoir)", color: "orange" },
+        HS = { id: 3, value: "HS (réparation urgente)", color: "red" }, OUI = { id: 4, value: "Oui", color: "green" }, NON = { id: 5, value: "Non", color: "light-gray" };
+  const COM = ["Engin sale, nettoyage à refaire", "Freinage mou à l'essai", "Klaxon faible", "Chaîne de levage à graisser", "Usure bandage roue avant",
+    "Niveau d'eau bas", "Inclinaison saccadée", "Arrêt d'urgence dur à réarmer", "Blue light ne s'allume plus"];
+  // Parc réel (export de la table Engins du 09/11/2026) : [id, n°, fournisseur, n° série, modèle, CACES, contrat, fourche, secteur, localisation, horamètre départ]
+  const E = [
+    [2, "473839", "Manuloc", "A276B0151817", "j2.2xn", "CACES 3", "LD", "PF", "En cyclage Roue", "Site affectation", 160],
+    [4, "486720", "Manuloc", "E438T05561M", "P1,8", "CACES 1", "LD", null, "En cyclage Roue", "Site affectation", 130],
+    [8, "497469", "Manuloc", "A276B08116R", "J2,5", "CACES 3", "LD", "PF", "En cyclage Roue", "Site affectation", 3120],
+    [1, "497471", "Manuloc", "A276B08105R", "J2,5XN", "CACES 3", "LD", "MF", "En cyclage Roue", "Site affectation", 4480],
+    [22, "503660", "Manuloc", "D435T05524S", "R1,4", "CACES 5", "LD", null, "Logistique", "Site affectation", 540],
+    [7, "520337", "Manuloc", "520337", "8FBEK18T", "CACES 3", "CD", "PF", "En cyclage Roue", "Extérieur - Usine Renault Douai", 2900],
+    [17, "525365", "Manuloc", "10189", "9FBH30T", "CACES 3", "CD", "LF", null, "Site affectation", 1870],
+    [18, "543674", "Manuloc", "11317", "9FBM35T", "CACES 3", "CD", "MF", null, "Site affectation", 960],
+    [3, "545575", "Manuloc", "A276B06323N", "8FBE18T", "CACES 3", "LD", "PF", "En cyclage Roue", "Site affectation", 3650],
+    [19, "547084", "Manuloc", "9FBMK25T11997", "9FBMK25T", "CACES 3", "CD", "MF", null, "Site affectation", 720],
+    [11, "549099", "Manuloc", "10267", "9FBH25T", "CACES 3", "LD", "LF", "En cyclage bouclier", "Site affectation", 1510],
+    [23, "549100", "Manuloc", "10261", "9FBH25T", "CACES 3", "LD", "PF", "Logistique", "Site affectation", 1640],
+    [20, "549101", "Manuloc", "10280", "9FBH25T", "CACES 3", "LD", "LF", "Logistique", "Site affectation", 850],
+    [13, "549102", "Manuloc", "10284", "9FBH25T", "CACES 3", "LD", "LF", "Assemblage", "Site affectation", 1420],
+    [14, "549103", "Manuloc", "10292", "9FBH25T", "CACES 3", "LD", "LF", "Assemblage", "Site affectation", 1390],
+    [15, "549104", "Manuloc", "10273", "9FBH25T", "CACES 3", "LD", "LF", "Assemblage", "Site affectation", 1455],
+    [21, "549105", "Manuloc", "10298", "9FBH25T", "CACES 3", "LD", null, "Logistique", "Site affectation", 1580],
+    [6, "549106", "Manuloc", "10295", "9FBH25T", "CACES 3", "LD", "PF", "En cyclage Roue", "Extérieur - Usine Renault Douai", 1300],
+    [9, "549107", "Manuloc", "10287", "9FBH25T", "CACES 3", "LD", "PF", "En cyclage Roue", "Site affectation", 1490],
+    [10, "555629", "Manuloc", "555629", "8FBE18T", "CACES 3", "LD", "PF", "En cyclage Roue", "Site affectation", 5550],
+    [12, "567420", "Manuloc", "7222824", "RRE200H ", "CACES 5", "LD", "LF", "En cyclage bouclier", "Site affectation", 610],
+    [24, "567421", "Manuloc", "7222823", "RRE200H ", "CACES 5", "LD", "LF", "Logistique", "Site affectation", 580],
+    [5, "926", "STILL", "F20165Y00926", "ECU16", "CACES 1", "LD", null, "En cyclage Roue", "Site affectation", 2240],
+    [16, "SML75800", "Manuloc", null, null, "CACES 2", "Prêt", "LF", null, "Site affectation", 90]
+  ];
+  // secteur saisi dans les check-lists de démo pour les engins sans secteur dans la table
+  const SECT_SAISI = { "525365": "Logistique", "543674": "Assemblage", "547084": "Logistique", "SML75800": "En cyclage bouclier" };
+  let seed = 20261109;
+  const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const engins = E.map((e, k) => ({ id: e[0], order: String(k + 1), "Numero Engin": e[1], "Fournisseur": e[2], "N° de série": e[3], "Modèle": e[4],
+    "Type": e[5], "Contrat": e[6], "Fourche": e[7], "Site": "LAMBRES", "Secteur": e[8], "Localisation": e[9] }));
+  const byNum = Object.fromEntries(E.map(e => [e[1], e]));
+  const link = num => [{ id: byNum[num][0], value: num }];
+  const sect = (s, k) => [{ id: 10 + k, value: s }];
+  const rows = []; let id = 1000;
+  const hor = Object.fromEntries(E.map(e => [e[1], e[10]]));
+  const n = shiftNow();
+  for (let d = addDays(n.date, -20); d <= n.date; d = addDays(d, 1)) {
+    for (const p of POSTES) {
+      const st = d < n.date ? "past" : p.i < n.i ? "past" : p.i === n.i ? "current" : "future";
+      if (st === "future") continue;
+      E.forEach((e, k) => {
+        if (/ext/i.test(e[9])) return;                    // engins à l'extérieur : pas de check-list
+        const pDone = st === "current" ? 0.6 : p.i === 2 ? 0.84 : 0.94;
+        if (rnd() > pDone) return;
+        const num = e[1];
+        hor[num] += 6 + Math.floor(rnd() * 3);
+        const ans = {}, issues = [];
+        Q.forEach((q, j) => {
+          if (j < 9) {
+            const r = rnd();
+            let v = r < 0.004 ? HS : r < 0.015 ? M : OK;
+            if (num === "503660" && j === 2 && d >= addDays(n.date, -1)) v = HS;
+            if (num === "486720" && j === 4 && d >= addDays(n.date, -3)) v = M;
+            if (num === "555629" && j === 8 && d >= addDays(n.date, -2)) v = M;
+            if (v !== OK) issues.push(j);
+            ans[q] = v;
+          } else if (j === 9) ans[q] = rnd() < 0.15 ? NON : OUI;
+          else if (j === 10) ans[q] = rnd() < 0.1 ? NON : OUI;
+          else ans[q] = NON;
+        });
+        const com = issues.map(j => num === "503660" && j === 2 ? "Klaxon HS, engin arrêté et signalé au chef d'équipe" : COM[j]).join(" ; ");
+        id++;
+        rows.push({ id, order: String(id), "Numéro check list": String(id), "Site": [{ id: 1, value: "LAMBRES" }], "N° Engin": link(num), "Date": d,
+          "Poste": [{ id: 20 + p.i, value: p.nom }], "Secteurs": sect(e[8] || SECT_SAISI[num], k), "Horamètre": String(hor[num]), ...ans, "Commentaire": com });
+      });
+    }
+  }
+  // Les 6 lignes réelles de l'export du 01/10/2026
+  const X = (s) => s === "OK" ? OK : s === "M" ? M : s === "HS" ? HS : s === "Oui" ? OUI : NON;
+  [[7, "473839", "Après-midi", "Assemblage", "175", "OK OK OK OK OK OK OK OK M Oui Non Non"],
+   [8, "486720", "Après-midi", "En cyclage bouclier", "146", "OK OK OK OK OK OK M OK OK Non Non Oui"],
+   [9, "555629", "Après-midi", "Logistique", "5578", "OK OK OK OK OK OK OK OK OK Oui Oui Oui"],
+   [10, "549101", "Matin", "En cyclage Roue", "875", "OK OK OK OK OK OK OK OK M Non Oui Oui"],
+   [11, "503660", "Après-midi", "Assemblage", "563", "OK OK OK OK OK OK HS M HS Oui Oui Oui"],
+   [12, "503660", "Après-midi", "Assemblage", "5745", "OK M HS M M OK HS OK OK Oui Oui Oui"]].forEach(([rid, eng, poste, s, h, a]) => {
+    const v = a.split(" ");
+    rows.push({ id: rid, order: String(rid), "Numéro check list": String(rid), "Site": [{ id: 1, value: "LAMBRES" }], "N° Engin": link(eng), "Date": "2026-10-01",
+      "Poste": [{ id: 20 + matchPoste(poste), value: poste }], "Secteurs": sect(s, 0), "Horamètre": h,
+      ...Object.fromEntries(Q.map((q, j) => [q, X(v[j])])), "Commentaire": null });
+  });
+  _demo = { engins, rows };
+  return _demo;
+}
+
+/* Démarrage */
+loadData();
+</script>
+</body>
+</html>
